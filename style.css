@@ -162,6 +162,7 @@ body{
         }
     }
 }
+
 @media (orientation: portrait){
     .menuButton{
         font-size: 110%;
@@ -171,8 +172,10 @@ body{
         button{
             font-size: large;
             background-color: white;
+            border: 5px solid white;
         }
         .disabled{
+            border: none;
             background-color: grey;
         }
         padding: 0em;
