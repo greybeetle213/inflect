@@ -1,11 +1,11 @@
 extras = [
     ["i", "me", "my", "mine"], 
-    ["you", "your", "yours"], 
+    ["you", "your"], 
     ["he", "him", "his"],
-    ["she", "her", "hers"],
-    ["they", "them", "their", "theirs"],
+    ["she", "her"],
+    ["they", "them", "their"],
     ["it", "its"],
-    ["we", "us", "our", "ours"],
+    ["we", "us", "our"],
     ["be", "is", "was", "am", "are", "were", "been", "being"],
     ["a","an"]
 ]
