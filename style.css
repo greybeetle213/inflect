@@ -212,7 +212,7 @@ body{
             background-color: white;
             color: black;
             border: 1px solid black;
-            /* transform: translateX(5em); */
+            transform: translateX(2em);
         }
     }
 }
