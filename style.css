@@ -172,11 +172,13 @@ body{
         button{
             font-size: large;
             background-color: white;
-            border: 5px solid white;
+            font-weight: bold;
+            border: 2px solid black;
         }
         .disabled{
-            border: none;
+            border: 2px solid black;
             background-color: grey;
+            font-weight: normal;
         }
         padding: 0em;
     }
