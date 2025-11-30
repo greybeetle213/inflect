@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+
+    <title>/ɪnfɫɛkt/</title>
+    <script src="dict_US/filteredConjs.js"></script>
+    <script src="dict_US/orthToIpa.js"></script>
+    <script src="dict_US/ipaToOrth.js"></script>
+    <script src="dict_US/extras.js"></script>
+    <script src="dict_US/orthTree.js"></script>
+    <script src="dict_US/ipaTree.js"></script>
+    <script src="dict_US/wordList.js"></script>
+    <script src="borowedCode.js"></script>
+    <script src="makePuzzle.js"></script>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="selectDifficulty('begginer')">
+    <div id="mainMenu">
+        <h1>/ɪnfɫɛkt/</h1>
+        <div id="difficultySelector" class="mainMenuMultiChoice">
+            Difficulty:
+            <br class="showOnMobile">
+            <button id="begginer" onclick="selectDifficulty('begginer')">Beginner</button>
+            <button id="easy" onclick="selectDifficulty('easy')">Easy</button>
+            <button id="medium" onclick="selectDifficulty('medium')">Medium</button>
+            <button id="hard" onclick="selectDifficulty('hard')">Hard</button>
+            <button id="harder" onclick="selectDifficulty('harder')">Harder</button>
+        </div>
+        <div class="mainMenuMultiChoice">
+            Dialect:
+            <br class="showOnMobile">
+            <button class="disabled" onclick="window.location.href='index.html'">RP English</button>
+            <button>General American English</button>
+        </div>
+        <div>
+            <button id="playButton" class="menuButton" onclick="requestAnimationFrame(play)">Play!</button>
+            <button class="menuButton" onclick="window.location='tutorial.html'">How to Play</button>
+        </div>
+        <span id="progress"></span>
+    </div>
+    <div id="game">
+        <div id="words"></div>
+        <div id="multichoice">
+            <div id="multichoiceStyler">
+                <div id="choices"></div>
+                <div>
+                    <span class="hoverBox">
+                        <span class="hoverText" id="manySelectHover"></span>
+                        <button id="doneBtn">Done</button>
+                    </span>
+                    <button onclick="
+                        multichoiceMenu.style.display = 'none';
+                        multichoicesDiv.innerHTML = ''
+                    ">cancel</button>
+                </div>
+            </div>
+        </div>
+        <div id="popupMenu">
+            <div id="standardPopupButtons">
+                <button id="toIPA" class="popupBtn" onclick="toggleIPA(popupMenuWordId)">
+                    <span class="hoverText" id="toIPAHover"></span>
+                    To IPA
+                </button>
+                <button id="toOrth" class="popupBtn" onclick="toggleIPA(popupMenuWordId)">
+                    <span class="hoverText" id="toOrthHover"></span>
+                    Spell Word
+                </button>
+                <button id="changeForm" class="popupBtn" onclick="changeForm(popupMenuWordId)">
+                    <span class="hoverText" id="changeFormHover"></span>
+                    Change Form
+                </button>
+                <button id="deleteLetter" class="popupBtn" onclick="deletePhonemeOrLetter(popupMenuWordId)">
+                    <span class="hoverText" id="deleteLetterHover"></span>
+                    Delete Letters
+                </button>
+                <button id="deletePhoneme" class="popupBtn" onclick="deletePhonemeOrLetter(popupMenuWordId)">
+                    <span class="hoverText" id="deletePhonemeHover"></span>
+                    Delete Phonemes
+                </button>
+                <button id="split" class="popupBtn" onclick="splitWord(popupMenuWordId)">
+                    <span class="hoverText" id="splitHover"></span>
+                    Split
+                </button>
+                <button id="merge" class="popupBtn" onclick="mergeMenu(popupMenuWordId)">
+                    <span class="hoverText" id="mergeHover"></span>
+                    Merge
+                </button>
+            </div>
+            <div id="customButtons">
+    
+            </div>
+            <button id="revert" class="popupBtn" style="color: red;" onclick="revert(popupMenuWordId);closePopupMenu()">Revert To Here</button>
+        </div>
+        <div id="toolBar">
+            <div id="toolBarContent">
+                <div id="goalText"></div>
+                <div id="toolBarButtons">
+                    <span id="progressNewPuzzle"></span>
+                    <button onclick="deleteAll();play()" id="newPuzzle">New Puzzle</button>
+                    <button onclick="window.location.reload()">Back to Menu</button>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+</body>
+</html>
