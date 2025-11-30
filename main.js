@@ -79,8 +79,9 @@ function beginGame(puzzleLocal){
     if(firstGame){
         document.addEventListener("mousedown", closePopupMenuWhenClickedOffOf)
         document.addEventListener("touchstart", closePopupMenuWhenClickedOffOf)
-        document.addEventListener("touchstart", startPanOrZoom)
-        document.addEventListener("touchmove", panAndZoom)
+        document.addEventListener("touchstart", startPanOrZoom, {passive: false})
+        document.addEventListener("gesturestart", (e)=>{e.preventDefault()}, {passive: false})
+        document.addEventListener("touchmove", panAndZoom, {passive: false})
         document.addEventListener("touchend", zoomEnd)
         document.addEventListener("wheel", zoomMouse)
         document.addEventListener("mousedown", (e)=>{
@@ -942,6 +943,7 @@ function panAndZoom(e){
             return
         }
     }
+    e.preventDefault()
     if(e.touches.length == 2){
         var zoomInfo = getZoomChange(e)
         zoomScale *= zoomInfo.scale

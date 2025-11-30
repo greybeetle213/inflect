@@ -1,6 +1,6 @@
 function dragElement(elmnt, clickFunction, moveFunction) { //https://www.w3schools.com/howto/howto_js_draggable.asp
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    var moved = false
+    var startPos = {x:0,y:0}
     elmnt.onmousedown = dragMouseDown;
     elmnt.ontouchstart = dragTouchDown;
     function dragMouseDown(e) {
@@ -9,6 +9,7 @@ function dragElement(elmnt, clickFunction, moveFunction) { //https://www.w3schoo
         // get the mouse cursor position at startup:
         pos3 = e.clientX;
         pos4 = e.clientY;
+        startPos = {x:elmnt.offsetLeft, y:elmnt.offsetTop}
         document.onmouseup = closeDragElement;
         document.ontouchend = closeDragElement;
         // call a function whenever the cursor moves:
@@ -29,7 +30,6 @@ function dragElement(elmnt, clickFunction, moveFunction) { //https://www.w3schoo
     }
 
     function elementDrag(e) {
-        moved = true
         e = e || window.event;
         e.preventDefault();
         // calculate the new cursor position:
@@ -45,7 +45,8 @@ function dragElement(elmnt, clickFunction, moveFunction) { //https://www.w3schoo
 
     function closeDragElement() {
         // stop moving when mouse button is released:
-        if(!moved){
+        console.log(startPos, elmnt.offsetLeft, elmnt.offsetTop)
+        if(Math.abs(startPos.x-elmnt.offsetLeft)<3 && Math.abs(startPos.y-elmnt.offsetTop)<3){
             clickFunction()
         }
         moved = false
