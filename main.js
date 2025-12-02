@@ -3,9 +3,12 @@ firstGame = true
 function play(){
     document.getElementById("progressNewPuzzle").style.display="initial"
     document.getElementById("playButton").innerHTML = "Generating Puzzle..."
-    requestAnimationFrame(init)
+    requestAnimationFrame(playRandomPuzzle)
 }
-function init(){
+function playRandomPuzzle(){
+    init(getBestPuzzle(...puzzleSettings))
+}
+function init(tree){
     wordDiv = document.getElementById("words")
     multichoiceMenu = document.getElementById("multichoice")
     multichoicesDiv = document.getElementById("choices")
@@ -18,7 +21,7 @@ function init(){
     goalWords = [] 
     startWords = []
     draging = false
-    tree = getBestPuzzle(...puzzleSettings)
+    // tree = getBestPuzzle(...puzzleSettings)
     wordsInPlay = new Set()
     for(var word of tree.activeWords){
         goalWords.push(word.orth)
@@ -32,6 +35,10 @@ function init(){
 
 function displayAnswer(tree){
     deleteAll()
+    zoomScale = 1
+    panAmount = {x:0, y:0}
+    wordDiv.style.transform = "scale("+zoomScale+")"
+    wordDiv.style.translate = panAmount.x + "px " + panAmount.y + "px"
     document.getElementById("mainMenu").style.display = "none"
     document.getElementById("game").style.display = "initial"
     goalWords = [] 
@@ -80,7 +87,11 @@ function beginGame(puzzleLocal){
         document.addEventListener("mousedown", closePopupMenuWhenClickedOffOf)
         document.addEventListener("touchstart", closePopupMenuWhenClickedOffOf)
         document.addEventListener("touchstart", startPanOrZoom, {passive: false})
-        document.addEventListener("gesturestart", (e)=>{e.preventDefault()}, {passive: false})
+        document.addEventListener("gesturestart", (e)=>{
+            if(e.target.className.indexOf("tutorial")==-1||e.target.parentNode.className.indexOf("tutorial")){
+                e.preventDefault()
+            }
+        }, {passive: false})
         document.addEventListener("touchmove", panAndZoom, {passive: false})
         document.addEventListener("touchend", zoomEnd)
         document.addEventListener("wheel", zoomMouse)
@@ -102,18 +113,36 @@ function beginGame(puzzleLocal){
     }
 }
 
+function addTieBar(symbol){
+    if(symbol.length > 1 && symbol[1] != "ː"){
+        if(symbol == "tʃ"){
+            symbol = "t͡ʃ"
+        }else if(symbol == "dʒ"){
+            symbol = "d͡ʒ"
+        }else{
+            symbol = symbol[0] + "͜" + symbol[1]
+        }
+    }
+    return(symbol)
+}
+
 function createWord(orth, data){
     if(!data){
         data = orth
     }
     newWord = document.createElement("div")
-    wordsInPlay.add(orth)
     newWord.classList.add("word")
     if(typeof(data)=="string"){
         newWord.classList.add("orthWord")
     } else {
         newWord.classList.add("ipaWord")
+        orthList = [...data]
+        orth = ""
+        for(var symbol of data){
+            orth += addTieBar(symbol)
+        }
     }
+    wordsInPlay.add(orth)
     newWord.innerHTML = orth
     var id = currentIdMax
     dragElement(newWord, ()=>{
@@ -287,7 +316,11 @@ function toIPA(orth,id){
     ipa = orthToIpa[orth]
     joinedIPA = []
     for(let word of ipa){
-        joinedIPA.push(word.join(""))
+        var joinedWord = ""
+        for(var sound of word){
+            joinedWord += addTieBar(sound)
+        }
+        joinedIPA.push(joinedWord)
     }
     var buttons = []
     var disabledButton = false
@@ -432,6 +465,10 @@ function deletePhonemeOrLetter(id){
 function deletePhoneme(data,id){
     closePopupMenu()
     ipa = [...data]
+    data = [...data]
+    for(var i = 0; i<data.length;i++){
+        data[i] = addTieBar(data[i])
+    }
     manySelect(data, 
         (indexes)=>{
             removed = []
@@ -603,6 +640,7 @@ function manySelect(choices,func, verifyFunc){
             if(verify.wordOk){
                 document.getElementById("doneBtn").disabled = null
                 document.getElementById("doneBtn").innerHTML = "Done"
+                document.getElementById("manySelectHover").innerHTML = ""
             }else{
                 document.getElementById("doneBtn").disabled = "true"
                 document.getElementById("manySelectHover").innerHTML = verify.hoverText
@@ -638,6 +676,7 @@ function popupMenu(id){
         document.getElementById("deletePhoneme").style.display = "initial"
         document.getElementById("toOrth").style.display = "initial"
         document.getElementById("merge").style.display = "initial"
+        document.getElementById("split").style.display = "initial"
 
         if(ipaToOrth[buttonDict[id].data.join(",")]){
             document.getElementById("toOrth").disabled = null
@@ -674,6 +713,7 @@ function popupMenu(id){
         document.getElementById("deleteLetter").style.display = "initial"
         document.getElementById("changeForm").style.display = "initial"
         document.getElementById("merge").style.display = "initial"
+        document.getElementById("split").style.display = "initial"
 
         if(orthToIpa[buttonDict[id].data]){
             document.getElementById("toIPA").disabled = null
@@ -711,8 +751,9 @@ function popupMenu(id){
             document.getElementById("mergeHover").innerHTML = "There are no other spelled out words to merge with"
         }
     }
-
-
+    hiddenButtonsForTutorial.forEach((id)=>{
+        document.getElementById(id).style.display = "none"
+    })
     makeElemOnscreen(popupMenuDiv)
 }
 
@@ -805,11 +846,22 @@ function updateGoalText(){
     goalPrefix += ": "
 
     document.getElementById("goalText").innerHTML = goalPrefix + goalText.join(", ")
-    if(completedWordCount == goalText.length){
+    if(completedWordCount == goalText.length && !answerShown){
         document.getElementById("toolBar").style.backgroundColor = "green"
         document.getElementById("goalText").style.color = "white" 
         for(var elem of document.getElementsByClassName("completedGoal")){
             elem.style.color="white"
+        }
+        if(lastTutorialQuestion){
+            lastTutorialQuestion = false
+            tutorial = false
+            document.getElementById("showAnswer").style.display = "none"
+            document.getElementById("nextTutorial").style.display = "none"
+            document.getElementById("menuButton").innerHTML = "Finish"
+        }
+        if(tutorial){
+            document.getElementById("nextTutorial").style.display = "initial"
+            document.getElementById("showAnswer").style.display = "none"
         }
     }else{
         document.getElementById("toolBar").style.backgroundColor = "white"
@@ -939,7 +991,10 @@ function zoomMouse(e){
 
 function panAndZoom(e){
     for(var touch of e.touches){
-        if(touch.target.className.indexOf("Word")!=-1 || touch.target.className.indexOf("Btn")!=-1){
+        if(touch.target.className.indexOf("Word")!=-1 || touch.target.className.indexOf("Btn")!=-1 || touch.target.className.indexOf("tutorial")!=-1){
+            return
+        }
+        if(touch.target.parentNode.className && touch.target.parentNode.className.indexOf("tutorial")){
             return
         }
     }

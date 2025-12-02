@@ -144,7 +144,6 @@ class wordTree{
                 this.endWordNum = 4
                 break
         }
-        this.generatePuzzle()
     }
 
     toString(){
@@ -223,7 +222,9 @@ class wordTree{
     }
 
     createWord(orth){
-        this.roots.push(new wordNodeOrth(orth, this))
+        var newNode = new wordNodeOrth(orth, this)
+        this.roots.push(newNode)
+        return(newNode)
     }
     createRandomWords(num){
         for(var i = 0; i<num; i++){
@@ -309,11 +310,20 @@ class wordNodeOrth{
         }
         if(!this.parents.length){
             this.displayId = createWord(formatedOrth, this.orth)
+            makeElemOnscreen(buttonDict[this.displayId].elem)
+            moveWordSoNotIntersecting(this.displayId)
         }else{
             if(this.parents.length == 1){
                 this.displayId = createChildWord(this.parents[0].displayId, formatedOrth, this.orth)
+                moveWordSoNotIntersecting(this.displayId)
             }else{
-                this.displayId = createChildWord(this.parents[0].displayId, formatedOrth, this.orth, this.parents[1].displayId)
+                var parent1elem = buttonDict[this.parents[0].displayId].elem
+                var parent2elem = buttonDict[this.parents[1].displayId].elem
+                if(getOffset(parent1elem).top <  getOffset(parent2elem).top){
+                    this.displayId = createChildWord(this.parents[1].displayId, formatedOrth, this.orth, this.parents[0].displayId)
+                }else{
+                    this.displayId = createChildWord(this.parents[0].displayId, formatedOrth, this.orth, this.parents[1].displayId)
+                }
             }
         }
         for(var child of this.children){
@@ -539,6 +549,7 @@ function getBestPuzzle(difficulty, tries){
     var bestScore = 0
     for(var i=0;i<tries;i++){
         var puzzle = new wordTree(difficulty)
+        puzzle.generatePuzzle()
         var goal = []
         puzzle.activeWords.forEach((word)=>{
             goal.push(word.orth)

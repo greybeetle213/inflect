@@ -14,7 +14,9 @@
     <script src="dict/wordList.js"></script>
     <script src="borowedCode.js"></script>
     <script src="makePuzzle.js"></script>
+    <script src="tutorial.js"></script>
     <script src="main.js"></script>
+    <script>america=false</script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body onload="selectDifficulty('begginer')">
@@ -37,7 +39,7 @@
         </div>
         <div>
             <button id="playButton" class="menuButton" onclick="requestAnimationFrame(play)">Play!</button>
-            <button class="menuButton" onclick="window.location='tutorial.html'">How to Play</button>
+            <button class="menuButton" onclick="startTutorial()">Tutorial</button>
         </div>
         <span id="progress"></span>
     </div>
@@ -100,11 +102,138 @@
                 <div id="toolBarButtons">
                     <span id="progressNewPuzzle"></span>
                     <button onclick="deleteAll();play()" id="newPuzzle">New Puzzle</button>
+                    <button onclick="displayAnswer(tree)" id="showAnswer" style="display: none;">Show Answer</button>
+                    <button id="nextTutorial" style="display: none;">Next</button>
+                    <button id="simalarPuzzle" style="display: none;">Try Again</button>
                     <!-- <button onclick="displayAnswer(tree)">Show Computer's Solution</button> -->
-                    <button onclick="window.location.reload()">Back to Menu</button>
+                    <button onclick="window.location.reload()" id="menuButton">Main Menu</button>
                 </div>
             </div>
             <hr>
+        </div>
+    </div>
+    <div id="tutorialInfo1" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(1/9) View Controls:</h1>
+        <div class="tutorial">
+            You can move your view by clicking and dragging on the background. 
+            <br><br>
+            Zoom with the scroll wheel/by pinching.
+            <br><br>
+            You can click on words to drag them around.
+        </div>
+    </div>
+    <div id="tutorialInfo2" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(2/9) New Tool:</h1>
+        <span class="tutorialHeader">
+            <button class="popupBtn">
+                Delete Letters
+            </button>
+        </span>
+        <div class="tutorial">
+            Click on any word, and then select "Delete Letters". 
+            <br><br>
+            Try to make the goal word (shown in the top left)
+            <br><br>
+            If you make a mistake, click on an old word and select "Revert To Here"
+        </div>
+    </div>
+    <div id="tutorialInfo3" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(3/9) New Tool:</h1>
+        <span class="tutorialHeader">
+            <button class="popupBtn">
+                Change Form
+            </button>
+        </span>
+        <div class="tutorial">
+            Click on any word, and then select "Change Form". 
+            <br><br>
+            "Forms" are inflectional variants. If two words would be the same entry in a dictionary (eg. think, thinks), they are probably inflectional variants.
+            <br><br>
+            Try to make the goal word (shown in the top left)
+        </div>
+    </div>
+    <div id="tutorialInfo4" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(4/9) Put It Together!</h1>
+        <div class="tutorial">
+            Try to make the goal word.
+        </div>
+    </div>
+    <div id="tutorialInfo5" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(5/9) New Tools:</h1>
+        <span class="tutorialHeader">
+            <button class="popupBtn">
+                To IPA
+            </button>
+        </span>
+        <span class="tutorialHeader">
+            <button class="popupBtn">
+                Spell Word
+            </button>
+        </span>
+        <div class="tutorial">
+            Selecting "To IPA" will let you convert a word to the International Phonetic Alphabet. This is a representation of how a word is pronounced, meaning that, for example, "two", "to" and "too" are all written /tuː/.
+            <br>
+            You can convert a word back from the IPA by selecting "Spell Word".
+            <br><br>
+            Try to make the goal word.
+        </div>
+    </div>
+    <div id="tutorialInfo6" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(6/9) New Tool:</h1>
+        <span class="tutorialHeader">
+            <button class="popupBtn">
+                Delete Phoneme
+            </button>
+        </span>
+        <div class="tutorial">
+            After clicking on an IPA word, you can select "Delete Phoneme". You could for example change /pɔːt/ to /ɔːt/. (Spelled out this is "port" to "ought")
+            <br><br>
+            Try to make the goal word.
+        </div>
+    </div>
+    <div id="tutorialInfo7" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(7/9) Rule:</h1>
+        <div class="tutorial">
+            Each word may only be on the board once.
+            <br><br>
+            Try to make the goal words!
+        </div>
+    </div>
+    <div id="tutorialInfo8" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(8/9) New Tool:</h1>
+        <span class="tutorialHeader">
+            <button class="popupBtn">
+                Merge
+            </button>
+        </span>
+        <div class="tutorial">
+            After selecting any word, choose "Merge" and then the word you want to merge it to from the popup menu. You can delete lots of letters before merging, so you could merge "th", and "e" to "the".
+            <br><br>
+            Try to make the goal word!
+        </div>
+    </div>
+    <div id="tutorialInfo9" class="tutorialInfo" style="display: none;">
+        <span style="font-size: xx-large; color: white;" class="spacer">.</span>
+        <h1>(9/9) New Tool:</h1>
+        <span class="tutorialHeader">
+            <button class="popupBtn">
+                Split
+            </button>
+        </span>
+        <div class="tutorial">
+            This is the last thing in the tutorial!
+            <br><br>
+            You can split a word which is in the dictionary into two words eg. "handbook" -> "hand" "book" is possible, but "bighat" -> "big" "hat" is not, because "bighat" is not a word.
+            <br><br>
+            Try to make the goal words!
         </div>
     </div>
 </body>
