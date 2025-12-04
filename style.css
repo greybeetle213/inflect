@@ -68,7 +68,10 @@ body{
     padding: 0.05em;
     text-wrap: nowrap;
 }
-
+img{
+    height: 100%;
+    width: 100%;
+}
 .goalWord{
     background-color: green;
     color: white;
