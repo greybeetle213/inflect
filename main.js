@@ -724,7 +724,7 @@ function popupMenu(id){
                 document.getElementById("changeForm").disabled = null
             } else {
                 document.getElementById("changeForm").disabled = true
-                document.getElementById("changeFormHover").innerHTML = "No other forms of '" + buttonDict[id].orth + "'"
+                document.getElementById("changeFormHover").innerHTML = "No inflectional variants of '" + buttonDict[id].orth + "'"
             }
             if(getOrthSplits(buttonDict[id].orth).length){
                 document.getElementById("split").disabled = null
