@@ -1188,6 +1188,9 @@ function openMobileMenu(){
     document.getElementById("closeMobileMenuButton").style.display = "initial"
 }
 function closeMobileMenu(){
+    if(tutorial){
+        return
+    }
     document.getElementById("mobileMenu").style.display = "none"
     document.getElementById("openMobileMenuButton").style.display = "initial"
     document.getElementById("closeMobileMenuButton").style.display = "none"
