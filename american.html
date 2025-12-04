@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, interactive-widget=resizes-content"/>
 
     <title>/ɪnfɫɛkt/</title>
     <script src="dict_US/filteredConjs.js"></script>
@@ -96,20 +96,55 @@
             </div>
             <button id="revert" class="popupBtn" style="color: red;" onclick="revert(popupMenuWordId);closePopupMenu()">Revert To Here</button>
         </div>
-        <div id="toolBar">
-            <div id="toolBarContent">
-                <div id="goalText"></div>
-                <div id="toolBarButtons">
-                    <span id="progressNewPuzzle"></span>
-                    <button onclick="deleteAll();play()" id="newPuzzle">New Puzzle</button>
-                    <button onclick="displayAnswer(tree)" id="showAnswer" style="display: none;">Show Answer</button>
-                    <button id="nextTutorial" style="display: none;">Next</button>
-                    <button id="simalarPuzzle" style="display: none;">Play Simalar Puzzle</button>
-                    <!-- <button onclick="displayAnswer(tree)">Show Computer's Solution</button> -->
-                    <button onclick="window.location.reload()">Back to Menu</button>
+        <div id="guiBox">
+            <div id="toolBar">
+                <div id="toolBarContent">
+                    <span id="mobileTopBar">
+                        <div id="goalText"></div>
+                        <span>
+                            <span id="mobileButtonBox">
+                                <button id="mobileReplayButton" onclick="deleteAll();play()" style="display: none;" class="iconButton">
+                                    <img src="icons/reset-left-line.svg" alt="">
+                                </button>
+                                <button id="openMobileMenuButton" class="iconButton" onclick="openMobileMenu()"><img src="icons/menu-line.svg"></button>
+                                <button id="closeMobileMenuButton" class="iconButton" onclick="closeMobileMenu()" style="display: none;"><img src="icons/close-large-line.svg"></button>
+                            </span>
+                        </span>
+                    </span>
+                    <div id="tutorialButtons" style="display: none;">
+                        <button onclick="displayAnswer(tree)" id="showAnswer" style="display: none;">Show Answer</button>
+                        <button id="simalarPuzzle" style="display: none;">Try Again</button>
+                        <button id="nextTutorial" style="display: none;">Next</button>
+                        <button onclick="window.location.reload()" id="menuButtonTutorial">Main Menu</button>
+                    </div>
+                    <div id="toolBarButtons">
+                        <span id="progressNewPuzzle"></span>
+                        <button onclick="deleteAll();play()" id="newPuzzle">New Puzzle</button>
+                        <button onclick="openDictionary()" id="showDictionary">Dictionary</button>
+                        <!-- <button onclick="displayAnswer(tree)">Show Computer's Solution</button> -->
+                        <button onclick="window.location.reload()" id="menuButton">Main Menu</button>
+                    </div>
+                    <div id="mobileMenu" style="display: none;">
+                        <hr>
+                        <button onclick="closeMobileMenu();deleteAll();play()">New Puzzle</button>
+                        <button onclick="openDictionary()">Open Dictionary</button>
+                        <button onclick="window.location.reload()">Back to Main Menu</button>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <div id="dictionary" class="canScroll" style="display: none;">
+                <div id="searchBarBox" class="canScroll">
+                    <input type="text" placeholder="Search Word" id="dictionarySearch">
+                    <button onclick="closeDictionary();closeMobileMenu()" class="iconButton"><img src="icons/close-large-line.svg"></button>
+                </div>
+                <span id="searchFailed">
+                    Type something
+                </span>
+                <div id="searchResults" class="canScroll">
+
                 </div>
             </div>
-            <hr>
         </div>
     </div>
     <div id="tutorialInfo1" class="tutorialInfo" style="display: none;">

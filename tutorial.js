@@ -7,21 +7,15 @@ function startTutorial(){
     makeScrollShadows()
     document.getElementById("mainMenu").style.display = "none"
     document.getElementById("tutorialInfo1").style.display = "flex"
+    document.getElementById("openMobileMenuButton").style.display = "none"
+    document.getElementById("toolBarButtons").style.display = "none"
+    document.getElementById("tutorialButtons").style.display = "flex"    
     playLevel1()
 }
 
 function makeScrollShadows(){
     var tutorialBoxes = document.getElementsByClassName("tutorialInfo")
     for(var tutorialBox of tutorialBoxes){
-        var scrollFunc = (e)=>{
-            e.target.style.boxShadow = "0px -3px 3px grey"
-            if(e.target.scrollTop != 0){
-                e.target.style.boxShadow += ",0px 10px 10px grey inset"
-            }
-            if(e.target.scrollTop != e.target.scrollTopMax){
-                e.target.style.boxShadow += ", 0px -10px 10px grey inset"
-            }
-        }
         tutorialBox.style.display = "flex"
         scrollFunc({target:tutorialBox})
         tutorialBox.style.display = "none"

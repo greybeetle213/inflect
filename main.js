@@ -88,7 +88,7 @@ function beginGame(puzzleLocal){
         document.addEventListener("touchstart", closePopupMenuWhenClickedOffOf)
         document.addEventListener("touchstart", startPanOrZoom, {passive: false})
         document.addEventListener("gesturestart", (e)=>{
-            if(e.target.className.indexOf("tutorial")==-1||e.target.parentNode.className.indexOf("tutorial")){
+            if(e.target.className.indexOf("canScroll")==-1||e.target.parentNode.className.indexOf("canScroll")){
                 e.preventDefault()
             }
         }, {passive: false})
@@ -109,6 +109,7 @@ function beginGame(puzzleLocal){
                 panMouse(e)
             }
         })
+        document.getElementById("dictionarySearch").addEventListener("input",searchDictionary)
         firstGame = false
     }
 }
@@ -767,6 +768,9 @@ function closePopupMenuWhenClickedOffOf(event){
     if(event.target.className != "popupBtn"){
         closePopupMenu()
     }
+    if(event.target.parentNode.id != "mobileMenu" && event.target.parentNode.id != "closeMobileMenuButton" && event.target.parentNode.id != "mobileButtonBox"){
+        closeMobileMenu()
+    }
 }
 
 function makeElemOnscreen(elem){
@@ -862,10 +866,13 @@ function updateGoalText(){
         if(tutorial){
             document.getElementById("nextTutorial").style.display = "initial"
             document.getElementById("showAnswer").style.display = "none"
+        }else{
+            document.getElementById("mobileReplayButton").style.display = "initial"
         }
     }else{
         document.getElementById("toolBar").style.backgroundColor = "white"
         document.getElementById("goalText").style.color = "black" 
+        document.getElementById("mobileReplayButton").style.display = "none"
     }
 }
 
@@ -952,6 +959,12 @@ function getPanChange(e){
 }
 
 function panMouse(e){
+    if(e.target.parentNode.className && e.target.parentNode.className.indexOf("canScroll")!=-1){
+        return
+    }
+    if(e.target.className.indexOf("canScroll")!=-1){
+        return
+    }
     if(!lastDrag){
         lastDrag = {x: e.clientX, y:e.clientY}
         return({x:0, y:0})
@@ -966,6 +979,12 @@ function panMouse(e){
 }
 
 function zoomMouse(e){
+    if(e.target.parentNode.className && e.target.parentNode.className.indexOf("canScroll")!=-1){
+        return
+    }
+    if(e.target.className.indexOf("canScroll")!=-1){
+        return
+    }
     if(e.target.className.indexOf("Btn")!=-1){
         return
     }
@@ -991,10 +1010,10 @@ function zoomMouse(e){
 
 function panAndZoom(e){
     for(var touch of e.touches){
-        if(touch.target.className.indexOf("Word")!=-1 || touch.target.className.indexOf("Btn")!=-1 || touch.target.className.indexOf("tutorial")!=-1){
+        if(touch.target.className.indexOf("Word")!=-1 || touch.target.className.indexOf("Btn")!=-1 || touch.target.className.indexOf("canScroll")!=-1){
             return
         }
-        if(touch.target.parentNode.className && touch.target.parentNode.className.indexOf("tutorial")){
+        if(touch.target.parentNode.className && touch.target.parentNode.className.indexOf("canScroll")){
             return
         }
     }
@@ -1045,4 +1064,131 @@ function limitPan(){
     }
     wordDiv.style.translate = panAmount.x + "px " + panAmount.y + "px"
     moveAllLines()
+}
+
+function openDictionary(){
+    document.getElementById("dictionary").style.display = "flex"
+    document.getElementById("showDictionary").style.display = "none"
+    document.getElementById("searchFailed").innerHTML = "Type something"
+    document.getElementById("dictionarySearch").value = ""
+    document.getElementById("searchResults").innerHTML = ""
+    document.getElementById("dictionarySearch").focus()
+}
+function closeDictionary(){
+    document.getElementById("dictionary").style.display = "none"
+    document.getElementById("showDictionary").style.display = "initial"
+}
+function searchDictionary(){
+    var search = document.getElementById("dictionarySearch").value
+    document.getElementById("searchResults").innerHTML = ""
+    if(!search){
+        document.getElementById("searchFailed").innerHTML = "Type something"
+        document.getElementById("searchFailed").style.display = "initial"
+        return
+    }
+    displaySearchResults(search)
+}
+
+function getBestSearchResults(word){
+    var currentSearchNode = orthTree
+    word = [...word]
+    for(var letter of word){
+        currentSearchNode = currentSearchNode[letter]
+        if(!currentSearchNode){
+            return([])
+        }
+    }
+    outlist = []
+    if(currentSearchNode.canEnd){
+        outlist.push(word.join(""))
+    }
+    var maxSearchResults = 20
+    var currentPaths = []
+    for(var key of Object.keys(currentSearchNode)){
+        if(key != "canEnd"){
+            currentPaths.push([word.join("")+key, currentSearchNode[key]])
+        }
+    }
+    while(currentPaths.length && outlist.length < maxSearchResults){
+        currentPathsNextIter = []
+        for(var path of currentPaths){
+            if(path[1].canEnd){
+                outlist.push(path[0])
+            }
+            for(var key of Object.keys(path[1])){
+                if(key != "canEnd"){
+                    currentPathsNextIter.push([path[0]+key, path[1][key]])
+                }
+            }
+        }
+        currentPaths = currentPathsNextIter
+    }
+    return(outlist)
+}
+function displaySearchResults(word){
+    var searchResults = getBestSearchResults(word)
+    if(searchResults.length){
+        document.getElementById("searchFailed").style.display = "none"
+        searchResults.forEach((result)=>{
+            displaySearchResult(result)
+        })
+    }else{
+        document.getElementById("searchFailed").style.display = "initial"   
+        document.getElementById("searchFailed").innerHTML = "No results"
+    }
+}
+function displaySearchResult(word){
+    var searchResult = document.createElement("div")
+    searchResult.classList.add("searchResult")
+    searchResult.classList.add("canScroll")
+    var title = document.createElement("span")
+    title.classList.add("searchHeader")
+    title.classList.add("canScroll")
+    title.innerHTML = "<span class='searchTitle'>"+word+"</span>"
+    // var ipaList = document.createElement("span")
+    // ipaList.innerHTML = "Transcriptions: "
+    var ipaWordsFormated = []
+    for(var ipaWord of orthToIpa[word]){
+        var ipaWordFormated = ""
+        for(var sound of ipaWord){
+            ipaWordFormated += addTieBar(sound)
+        }
+        ipaWordsFormated.push("/"+ipaWordFormated+"/")
+    }
+    title.innerHTML += "<span class='transcriptions'>" + ipaWordsFormated.join(", ") + "</span>"
+    searchResult.appendChild(title)
+    // searchResult.appendChild(ipaList)
+
+    var conjList = document.createElement("span")
+    conjList.classList.add("canScroll")
+    conjList.classList.add("conjList")
+    if(conjDict[word] && conjDict[word].size > 1){
+        conjList.innerHTML = [...conjDict[word]].join(", ")
+    }else{
+        conjList.innerHTML = "No inflections"
+    }
+    searchResult.appendChild(conjList)
+
+    document.getElementById("searchResults").appendChild(searchResult)
+}
+
+function scrollFunc(e){
+    e.target.style.boxShadow = "0px -3px 3px grey"
+    if(e.target.scrollTop != 0){
+        e.target.style.boxShadow += ",0px 10px 10px grey inset"
+    }
+    if(e.target.scrollTop != e.target.scrollTopMax){
+        e.target.style.boxShadow += ", 0px -10px 10px grey inset"
+    }
+}
+
+function openMobileMenu(){
+    document.getElementById("mobileMenu").style.display = "flex"
+    document.getElementById("openMobileMenuButton").style.display = "none"
+    document.getElementById("closeMobileMenuButton").style.display = "initial"
+}
+function closeMobileMenu(){
+    document.getElementById("mobileMenu").style.display = "none"
+    document.getElementById("openMobileMenuButton").style.display = "initial"
+    document.getElementById("closeMobileMenuButton").style.display = "none"
 }
