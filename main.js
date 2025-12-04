@@ -475,7 +475,7 @@ function deletePhoneme(data,id){
             removed = []
             for(var i=0; i<ipa.length;i++){
                 if(!indexes.has(i)){
-                    removed.push(addTieBar(ipa[i]))
+                    removed.push(ipa[i])
                 }
             }        
             createChildWord(id, removed.join(""),removed)
@@ -484,7 +484,7 @@ function deletePhoneme(data,id){
             removed = []
             for(var i=0; i<ipa.length;i++){
                 if(!indexes.has(i)){
-                    removed.push(addTieBar(ipa[i]))
+                    removed.push(ipa[i])
                 }
             } 
             if(!removed.length){
