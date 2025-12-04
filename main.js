@@ -861,7 +861,7 @@ function updateGoalText(){
             tutorial = false
             document.getElementById("showAnswer").style.display = "none"
             document.getElementById("nextTutorial").style.display = "none"
-            document.getElementById("menuButton").innerHTML = "Finish"
+            document.getElementById("menuButtonTutorial").innerHTML = "Finish"
         }
         if(tutorial){
             document.getElementById("nextTutorial").style.display = "initial"
