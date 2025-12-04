@@ -482,15 +482,17 @@ function deletePhoneme(data,id){
         },
         (indexes)=>{
             removed = []
+            orth = ""
             for(var i=0; i<ipa.length;i++){
                 if(!indexes.has(i)){
                     removed.push(ipa[i])
+                    orth += addTieBar(ipa[i])
                 }
             } 
             if(!removed.length){
                 return({wordOk:false, hoverText:"You must keep at least one phoneme"})
             }
-            if(wordsInPlay.has(removed.join(""))){
+            if(wordsInPlay.has(orth)){
                 return({wordOk:false, hoverText:"You have already used /"+removed.join("")+"/"})
             }
             return({wordOk:true})
