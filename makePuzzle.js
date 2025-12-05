@@ -544,11 +544,15 @@ function getOrthSplits(word){
     return(options)
 }
 
-function getBestPuzzle(difficulty, tries){
+function getBestPuzzle(difficulty, tries, startWordsCustom, endWordsCustom){
     bestOption = {}
     var bestScore = 0
     for(var i=0;i<tries;i++){
         var puzzle = new wordTree(difficulty)
+        if(startWordsCustom&&endWordsCustom){
+            puzzle.startWordNum = startWordsCustom
+            puzzle.endWordNum = endWordsCustom
+        }
         puzzle.generatePuzzle()
         var goal = []
         puzzle.activeWords.forEach((word)=>{
@@ -585,3 +589,5 @@ function getBestPuzzle(difficulty, tries){
     }
     return(bestOption)
 }
+
+

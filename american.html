@@ -29,8 +29,25 @@
             <button id="easy" onclick="selectDifficulty('easy')">Easy</button>
             <button id="medium" onclick="selectDifficulty('medium')">Medium</button>
             <button id="hard" onclick="selectDifficulty('hard')">Hard</button>
-            <button id="harder" onclick="selectDifficulty('harder')">Harder</button>
-        </div>
+            <button id="custom" onclick="selectDifficulty('custom')">Custom</button>
+            <div id="customDificulty" style="display: none;">
+                <br>
+                <span class="numberInput">
+                    Starting Word Count: <input value="2" min="1" max="5" onchange="constrainInputNumber('startCountCustom')" id="startCountCustom" type="number">
+                </span>
+                <br>
+                <span class="numberInput">
+                    Goal Word Count: <input value="1" min="1" max="5" onchange="constrainInputNumber('goalCountCustom')" id="goalCountCustom" type="number">
+                </span>
+                <br>
+                <span>
+                    Steps:
+                    <button id="veryFewSteps" onclick="selectStepNum('veryFewSteps')">Very Few</button>
+                    <button id="fewSteps" onclick="selectStepNum('fewSteps')">Few</button>
+                    <button id="mediumSteps" onclick="selectStepNum('mediumSteps')">Medium</button>
+                    <button id="manySteps" onclick="selectStepNum('manySteps')">Many</button>
+                </span>
+            </div>        </div>
         <div class="mainMenuMultiChoice">
             Dialect:
             <br class="showOnMobile">

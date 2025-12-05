@@ -6,7 +6,11 @@ function play(){
     requestAnimationFrame(playRandomPuzzle)
 }
 function playRandomPuzzle(){
-    init(getBestPuzzle(...puzzleSettings))
+    if(puzzleSettings == "custom"){
+        init(getBestPuzzle(customDiff, customTryNum, Number(document.getElementById("startCountCustom").value),Number(document.getElementById("goalCountCustom").value)))
+    }else{
+        init(getBestPuzzle(...puzzleSettings))
+    }
 }
 function init(tree){
     wordDiv = document.getElementById("words")
@@ -883,8 +887,9 @@ function selectDifficulty(dif){
     document.getElementById("easy").classList.add("disabled")
     document.getElementById("medium").classList.add("disabled")
     document.getElementById("hard").classList.add("disabled")
-    document.getElementById("harder").classList.add("disabled")
+    document.getElementById("custom").classList.add("disabled")
     document.getElementById(dif).classList.remove("disabled")
+    document.getElementById("customDificulty").style.display = "none"
     //settings: start words, end words, number of steps, number of puzzle to generate before picking hardest
     if(dif=="begginer"){
         puzzleSettings=["begginer",10]
@@ -898,9 +903,38 @@ function selectDifficulty(dif){
     if(dif=="hard"){
         puzzleSettings=["hard",20]
     }
-    if(dif=="harder"){
-        puzzleSettings=["harder",20]
+    if(dif=="custom"){
+        document.getElementById("customDificulty").style.display = "flex"
+        selectStepNum("mediumSteps")
+        puzzleSettings="custom"
     }
+}
+
+function selectStepNum(dif){
+    document.getElementById("veryFewSteps").classList.add("disabled")
+    document.getElementById("fewSteps").classList.add("disabled")
+    document.getElementById("mediumSteps").classList.add("disabled")
+    document.getElementById("manySteps").classList.add("disabled")
+    document.getElementById(dif).classList.remove("disabled")
+    switch(dif){
+        case "veryFewSteps":
+            customDiff = "easy"
+            customTryNum = 5
+            break
+        case "fewSteps":
+            customDiff = "medium"
+            customTryNum = 10
+            break
+        case "mediumSteps":
+            customDiff = "hard"
+            customTryNum = 20
+            break
+        case "manySteps":
+            customDiff = "harder"
+            customTryNum = 20
+            break
+    }
+
 }
 
 function getDifferanceBetweenPoints(x1,y1,x2,y2){
@@ -1196,4 +1230,16 @@ function closeMobileMenu(){
     document.getElementById("mobileMenu").style.display = "none"
     document.getElementById("openMobileMenuButton").style.display = "initial"
     document.getElementById("closeMobileMenuButton").style.display = "none"
+}
+
+function constrainInputNumber(id){
+    var value = document.getElementById(id).value
+    var min = Number(document.getElementById(id).min)
+    var max = Number(document.getElementById(id).max)
+
+    value = value.replaceAll(/[^\d]/g,"")
+    value = Number(value)
+    value = Math.max(min, value)
+    value = Math.min(max, value)
+    document.getElementById(id).value = value
 }

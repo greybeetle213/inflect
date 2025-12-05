@@ -114,9 +114,13 @@ img{
 
 #mainMenu{
     font-size: xx-large;
+    position: absolute;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: scroll;
 }
 
 #toolBar{
@@ -157,9 +161,9 @@ img{
         flex-grow: 1;
         font-size: x-large;
     }
-    input:focus{
-        outline: 0;
-    }
+}
+input:focus{
+    outline: 0;
 }
 #searchFailed{
     width: 100%;
@@ -281,6 +285,17 @@ img{
     #mobileButtonBox{
         display: none;
     }
+    #customDificulty{
+        display: flex;
+        flex-direction: column;
+        font-size: xx-large;
+        align-items: start;
+        input{
+            font-size: xx-large;
+            height: 1em;
+            width: 2em;
+        }
+    }
 }
 
 @media (orientation: portrait){
@@ -294,6 +309,7 @@ img{
             background-color: white;
             font-weight: bold;
             border: 2px solid black;
+            padding: 0.05em;
         }
         .disabled{
             border: 2px solid black;
@@ -312,14 +328,6 @@ img{
         pointer-events: all;
     }
     #toolBarButtons{
-        /* width: 100%;
-        display: flex;
-        justify-content: stretch;
-        button{
-            flex-grow: 1;
-            font-size: x-large;
-            margin: 0.2em;
-        } */
         display: none;
     }
     #openMobileMenuButton, #closeMobileMenuButton{
@@ -442,6 +450,23 @@ img{
             flex-grow: 1;
             margin: 0.2em;
         }
+    }
+    #customDificulty{
+        display: flex;
+        flex-direction: column;
+        font-size: x-large;
+        align-items: start;
+        input{
+            font-size: x-large;
+            height: 1em;
+            width: 2em;
+        }
+    }
+    .numberInput{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
 }
 .menuButton{
