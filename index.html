@@ -63,21 +63,6 @@
     </div>
     <div id="game">
         <div id="words"></div>
-        <div id="multichoice">
-            <div id="multichoiceStyler">
-                <div id="choices"></div>
-                <div>
-                    <span class="hoverBox">
-                        <span class="hoverText" id="manySelectHover"></span>
-                        <button id="doneBtn">Done</button>
-                    </span>
-                    <button onclick="
-                        multichoiceMenu.style.display = 'none';
-                        multichoicesDiv.innerHTML = ''
-                    ">Cancel</button>
-                </div>
-            </div>
-        </div>
         <div id="popupMenu">
             <div id="standardPopupButtons">
                 <button id="toIPA" class="popupBtn" onclick="toggleIPA(popupMenuWordId)">
@@ -111,6 +96,17 @@
             </div>
             <div id="customButtons">
     
+            </div>
+            <div id="multichoice" class="canScroll popupBtnBox" style="display: none;">
+                <div id="multichoiceStyler" class="canScroll popupBtnBox">
+                    <div id="choices" class="canScroll popupBtnBox"></div>
+                    <div class="canScroll popupBtnBox">
+                        <span class="hoverBox">
+                            <span class="hoverText popupBtnBox" id="manySelectHover"></span>
+                            <button class="canScroll popupBtnBox" id="doneBtn">Done</button>
+                        </span>
+                    </div>
+                </div>
             </div>
             <button id="revert" class="popupBtn" style="color: red;" onclick="revert(popupMenuWordId);closePopupMenu()">Revert To Here</button>
         </div>

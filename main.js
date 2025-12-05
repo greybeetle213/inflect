@@ -73,6 +73,7 @@ function beginGame(puzzleLocal){
     document.getElementById("mainMenu").style.display = "none"
     document.getElementById("game").style.display = "initial"
     goalWords = puzzle.goal
+    clicking = false
     updateGoalText()
     puzzle.startWords.forEach((word)=>{
         var createdWordId = createWord(word)
@@ -97,16 +98,19 @@ function beginGame(puzzleLocal){
             }
         }, {passive: false})
         document.addEventListener("touchmove", panAndZoom, {passive: false})
+        multichoicesDiv.addEventListener("touchmove", manySelectTouchDrag)
         document.addEventListener("touchend", zoomEnd)
         document.addEventListener("wheel", zoomMouse)
         document.addEventListener("mousedown", (e)=>{
             if(e.target.className.indexOf("Word")==-1 && e.target.className.indexOf("Btn")==-1){
                 draging = true
             }
+            clicking = true
         })
         document.addEventListener("mouseup", (e)=>{
             draging = false
             lastDrag = 0
+            clicking = false
         })
         document.addEventListener("mousemove", (e)=>{
             if(draging){
@@ -468,7 +472,6 @@ function deletePhonemeOrLetter(id){
 }
 
 function deletePhoneme(data,id){
-    closePopupMenu()
     ipa = [...data]
     data = [...data]
     for(var i = 0; i<data.length;i++){
@@ -505,7 +508,7 @@ function deletePhoneme(data,id){
 }
 
 function deleteLetter(orth, id){
-    closePopupMenu()
+    // closePopupMenu()
     manySelect(orth.split(""), 
         (indexes)=>{
             orig = orth.split("")
@@ -623,20 +626,22 @@ function multichoice(choices, func){
 selectedIds = new Set()
 function manySelect(choices,func, verifyFunc){
     selectedIds = new Set()
+    document.getElementById("standardPopupButtons").style.display = "none"
     multichoiceMenu.style.display = "initial"
     document.getElementById("doneBtn").style.display = "initial"
     document.getElementById("doneBtn").innerHTML = "Done"
     document.getElementById("doneBtn").disabled = "true"
+    document.getElementById("manySelectHover").innerHTML = ""
     document.getElementById("doneBtn").onclick = ()=>{
-        multichoiceMenu.style.display = "none"
-        multichoicesDiv.innerHTML = ""
-        multichoiceMenu.style.display = "none"
+        closePopupMenu()
         func(selectedIds)            
     }
     for(let i = 0; i<choices.length;i++){
         let btn = document.createElement("button")
+        btn.classList.add("canScroll")
+        btn.classList.add("popupBtnMultiSelect")
         btn.innerHTML = choices[i]
-        btn.onclick = ()=>{
+        let clickFunction = ()=>{
             if(!selectedIds.delete(i)){
                 selectedIds.add(i)
                 btn.style.color = "red"
@@ -653,8 +658,33 @@ function manySelect(choices,func, verifyFunc){
                 document.getElementById("manySelectHover").innerHTML = verify.hoverText
             }
         }
+        btn.onpointerenter = ()=>{            
+            if(clicking){
+                clickFunction()
+            }
+        }
+        btn.onmousedown = clickFunction
+        // btn.ontouchstart = clickFunction
         multichoicesDiv.appendChild(btn)
     }
+    makeElemOnscreen(document.getElementById("popupMenu"))
+}
+
+function manySelectTouchDrag(e){
+    if(e.changedTouches.length!=1){
+        return
+    }
+    var touch = e.changedTouches[0]
+    var lastPos = touchDict[e.changedTouches[0].identifier]
+    for(var button of multichoicesDiv.childNodes){
+        var offset = getOffset(button)
+        var lastPosOverlapping = (lastPos.lastX > offset.left && lastPos.lastX < offset.left + offset.width && lastPos.lastY > offset.top && lastPos.lastY < offset.top + offset.height)
+        var currentPosOverlapping = (touch.clientX > offset.left && touch.clientX < offset.left + offset.width && touch.clientY > offset.top && touch.clientY < offset.top + offset.height)
+        if((currentPosOverlapping && !lastPosOverlapping)||(lastPosOverlapping&&!lastPos.firstButtonSelected)){
+            button.onmousedown()
+        }
+    }
+    touchDict[e.changedTouches[0].identifier] = {lastX:touch.clientX, lastY:touch.clientY,firstButtonSelected:true}
 }
 
 function popupMenu(id){
@@ -768,10 +798,12 @@ function closePopupMenu(){
     document.getElementById("popupMenu").style.display = "none"
     document.getElementById("customButtons").innerHTML = ""
     document.getElementById("customButtons").style.display = "none"
+    document.getElementById("multichoice").style.display = "none"
+    document.getElementById("choices").innerHTML = ""
 }
 
 function closePopupMenuWhenClickedOffOf(event){
-    if(event.target.className != "popupBtn"){
+    if(event.target.className.indexOf("popupBtn") == -1){
         closePopupMenu()
     }
     if(event.target.parentNode.id != "mobileMenu" && event.target.parentNode.id != "closeMobileMenuButton" && event.target.parentNode.id != "mobileButtonBox"){

@@ -17,30 +17,6 @@ body{
 #goalText{
     margin: 0.4em;
 }
-#multichoice{
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-}
-#multichoiceStyler{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    border: 2px solid black;
-    box-shadow: 3px 3px 3px grey;
-    margin: 5%;
-    min-height: 20%;
-    button{
-        font-size: xx-large;
-    }
-    div{
-        padding: 1em;
-    }
-}
 #popupMenu{
     display: none;
     position: absolute;
@@ -95,11 +71,20 @@ img{
     width: 100%;
     text-align: left;
     border-radius: 0%;
+    border: 2px outset grey;
     text-wrap: nowrap;
     font-size: x-large;
+    background-color: #f0f0f0;
     .hoverText{
         display: none;
     }
+}
+.popupBtn:hover{
+    background-color: lightgray;
+    border: 2px outset gray;
+}
+.popupBtn:active{
+    border: 2px inset gray;
 }
 
 .hoverBox{
@@ -296,6 +281,11 @@ input:focus{
             width: 2em;
         }
     }
+    #choices{
+        button:hover{
+            background-color: lightgray;
+        }
+    }
 }
 
 @media (orientation: portrait){
@@ -467,6 +457,34 @@ input:focus{
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+    }
+}
+#multichoiceStyler{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border: 2px outset grey;
+    margin: 0%;
+    padding: 0.1em;
+    width: max-content;
+    max-width: 95vw;
+    button{
+        font-size: xx-large;
+    }
+    div{
+        padding: 0em;
+    }
+}
+#choices{
+    margin-bottom: 0.5em;
+    button{
+        min-width: 0.9em;
+        padding-left: 0em;
+        padding-right: 0.05em;
+        background-color: #f0f0f0;
+        border-radius: 0.1em;
     }
 }
 .menuButton{
