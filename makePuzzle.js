@@ -566,6 +566,9 @@ function getBestPuzzle(difficulty, tries, startWordsCustom, endWordsCustom){
         if(puzzle.endWordNum == goal.length){
             score += 50
         }
+        if(!goal.length){
+            continue
+        }
         var wordLengthScore = goal[0].length**0.5
         for(var goalIndx = 1; goalIndx < goal.length; goalIndx++){
             wordLengthScore *= goal[goalIndx].length**0.5
