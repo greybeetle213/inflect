@@ -1395,6 +1395,7 @@ function openCopyMenu(){
 }
 
 async function shareBoard(){
+
     var shareImage = boardToCanvas()
     var blob = await getBlobFromCanvas(shareImage)
     var fileArray = [
@@ -1412,9 +1413,6 @@ async function shareBoard(){
         files: fileArray,
         url: "https://greybeetle213.github.io/inflect"
       };
-    // if(navigator.canShare(shareData)){
-        navigator.share(shareData)
-    // }else{
-    // openCopyMenu()
-    // }
+      navigator.share(shareData)
+
 }
