@@ -1376,7 +1376,7 @@ function boardToCanvas(){
 }
 
 async function openShareMenu(){
-    if(navigator.share){
+    if(navigator.canShare()){
         shareBoard()
     }else{
         openCopyMenu()
@@ -1413,6 +1413,7 @@ async function shareBoard(){
         files: fileArray,
         url: "https://greybeetle213.github.io/inflect"
       };
-      navigator.share(shareData)
+    
+    navigator.share(shareData)
 
 }
