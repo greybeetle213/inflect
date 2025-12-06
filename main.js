@@ -1410,11 +1410,12 @@ async function shareBoard(){
     ]
     const shareData = {
         title: "Share Solution",
-        files: fileArray
+        files: fileArray,
+        url: "https://greybeetle213.github.io/inflect"
       };
-    if(navigator.canShare(shareData)){
+    // if(navigator.canShare(shareData)){
         navigator.share(shareData)
-    }else{
-        openCopyMenu()
-    }
+    // }else{
+    // openCopyMenu()
+    // }
 }
