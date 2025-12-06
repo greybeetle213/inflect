@@ -89,11 +89,12 @@ function beginGame(puzzleLocal){
     popupMenuWordId = 0
     clickFunction = (id)=>{popupMenu(id)}
     if(firstGame){
+        addEventListener("resize", ()=>{makeElemOnscreen(document.getElementById("popupMenu"))})
         document.addEventListener("mousedown", closePopupMenuWhenClickedOffOf)
         document.addEventListener("touchstart", closePopupMenuWhenClickedOffOf)
         document.addEventListener("touchstart", startPanOrZoom, {passive: false})
         document.addEventListener("gesturestart", (e)=>{
-            if(e.target.className.indexOf("canScroll")==-1||e.target.parentNode.className.indexOf("canScroll")){
+            if(e.target.className.indexOf("canScroll")==-1&&e.target.parentNode.className.indexOf("canScroll")==-1){
                 e.preventDefault()
             }
         }, {passive: false})
@@ -812,6 +813,7 @@ function closePopupMenuWhenClickedOffOf(event){
 }
 
 function makeElemOnscreen(elem){
+    const html = document.getElementById("html")    
     pos = getOffset(elem)
     toolBarPos = getOffset(document.getElementById("toolBar"))
     if(pos.left<0){
@@ -821,11 +823,11 @@ function makeElemOnscreen(elem){
         elem.style.top = 5+toolBarPos.height+"px"
     }
     pos = getOffset(elem)
-    if(pos.top + pos.height > window.innerHeight){
-        elem.style.top = window.innerHeight-pos.height + "px"
+    if(pos.top + pos.height > html.clientHeight){
+        elem.style.top = html.clientHeight-pos.height + "px"
     }
-    if(pos.left + pos.width > window.innerWidth){
-        elem.style.left = window.innerWidth-pos.width + "px"
+    if(pos.left + pos.width > html.clientWidth){
+        elem.style.left = html.clientWidth-pos.width + "px"
     }
 }
 function moveWordSoNotIntersecting(id){
@@ -906,11 +908,15 @@ function updateGoalText(){
             document.getElementById("showAnswer").style.display = "none"
         }else{
             document.getElementById("mobileReplayButton").style.display = "initial"
+            document.getElementById("openShareMenu").style.display = "initial"
+            document.getElementById("mobileShareButton").style.display = "initial"
         }
     }else{
         document.getElementById("toolBar").style.backgroundColor = "white"
         document.getElementById("goalText").style.color = "black" 
         document.getElementById("mobileReplayButton").style.display = "none"
+        document.getElementById("openShareMenu").style.display = "none"
+        document.getElementById("mobileShareButton").style.display = "none"
     }
 }
 
@@ -1213,8 +1219,6 @@ function displaySearchResult(word){
     title.classList.add("searchHeader")
     title.classList.add("canScroll")
     title.innerHTML = "<span class='searchTitle'>"+word+"</span>"
-    // var ipaList = document.createElement("span")
-    // ipaList.innerHTML = "Transcriptions: "
     var ipaWordsFormated = []
     for(var ipaWord of orthToIpa[word]){
         var ipaWordFormated = ""
@@ -1240,12 +1244,16 @@ function displaySearchResult(word){
     document.getElementById("searchResults").appendChild(searchResult)
 }
 
+function getScrollTopMax(elem){
+    return(elem.scrollHeight - elem.clientHeight)
+}
+
 function scrollFunc(e){
     e.target.style.boxShadow = "0px -3px 3px grey"
     if(e.target.scrollTop != 0){
         e.target.style.boxShadow += ",0px 10px 10px grey inset"
     }
-    if(e.target.scrollTop != e.target.scrollTopMax){
+    if(e.target.scrollTop < getScrollTopMax(e.target)-10){
         e.target.style.boxShadow += ", 0px -10px 10px grey inset"
     }
 }
@@ -1274,4 +1282,137 @@ function constrainInputNumber(id){
     value = Math.max(min, value)
     value = Math.min(max, value)
     document.getElementById(id).value = value
+}
+
+function boardToCanvas(){
+    const canvas = document.createElement("canvas")
+    const bounds = getWordBounds()
+    const padding = 40
+    const goalRes = 1080
+    const width = bounds.right - bounds.left
+    const height = bounds.bottom - bounds.top
+    const scale = Math.max(width, height)/(goalRes-padding)
+    const borderScale = 0.1 //0.1*word box height
+    const verticalOffset = padding/2 + ((goalRes-padding)/2 - height/scale/2)
+    const horizontalOffset = padding/2 + ((goalRes-padding)/2 - width/scale/2)
+    canvas.width = goalRes
+    canvas.height = goalRes
+    globalToLocal = (x, y) => {
+        x -= bounds.left
+        x /= scale
+        y -= bounds.top
+        y /= scale
+        return({x:x,y:y})
+    }
+    var ctx = canvas.getContext("2d")
+    ctx.fillStyle = "green"
+    ctx.fillRect(0,0,goalRes,goalRes)
+    ctx.fillStyle = "white"
+    ctx.fillRect(padding/4,padding/4,goalRes-padding*0.5,goalRes-padding*0.5)
+    ctx.textBaseline = "top"
+    ctx.textAlign = "left"
+    var fontSet = false
+    ctx.strokeStyle = "black"
+    ctx.lineWidth = 10
+    for(var word of Object.values(buttonDict)){
+        var globalPos = getOffset(word.elem)
+        var localPos = globalToLocal(globalPos.left, globalPos.top)
+        var localSize = {width: globalPos.width/scale, height:globalPos.height/scale}
+        for(var line of word.lines){
+            var connectGlobalPos = getOffset(buttonDict[line.connectedToId].elem)
+            var connectedLocalPos = globalToLocal(connectGlobalPos.left, connectGlobalPos.top)
+            var connectedLocalSize = {width: connectGlobalPos.width/scale, height:connectGlobalPos.height/scale}
+
+            console.log(connectGlobalPos, 'line')
+            ctx.beginPath()
+            ctx.moveTo(localPos.x+localSize.width/2 + horizontalOffset, localPos.y+localSize.height/2 + verticalOffset)
+            ctx.lineTo(connectedLocalPos.x+connectedLocalSize.width/2 + horizontalOffset, connectedLocalPos.y+connectedLocalSize.height/2 + verticalOffset)
+            ctx.stroke()
+        }
+    }
+    for(var word of Object.values(buttonDict)){
+        var globalPos = getOffset(word.elem)
+        var orth = word.orth
+        if(!fontSet){
+            var fontSize = Math.floor(globalPos.height/scale*0.74)
+            ctx.font = fontSize + "px ipa"
+        }
+        if(typeof(word.data)=="string"){
+            ctx.letterSpacing = "-0.05em"
+            orth = orth
+        }else{
+            ctx.letterSpacing = "0.05em"
+            orth = "/"+orth+"/"
+        }
+        var localPos = globalToLocal(globalPos.left, globalPos.top)
+        var textWidth = ctx.measureText(orth).width
+        fontSize *= (globalPos.width/scale - 2/scale)/textWidth
+        fontSize = Math.floor(fontSize)
+        ctx.font = fontSize + "px ipa"
+        ctx.fillStyle = "black"
+        var borderThickness = Math.ceil(globalPos.height/scale*borderScale)
+        ctx.fillRect(localPos.x + horizontalOffset -borderThickness/2, localPos.y+verticalOffset-borderThickness/2, Math.floor(globalPos.width/scale)+borderThickness, Math.floor(globalPos.height/scale) +borderThickness)
+        if(word.enabled){
+            if(puzzle.goal.indexOf(word.orth)!=-1){
+                ctx.fillStyle = "green"
+            }else{
+                ctx.fillStyle = "white"
+            }
+        }else{
+            ctx.fillStyle = "lightgrey"
+        }
+        ctx.fillRect(localPos.x+horizontalOffset, localPos.y+verticalOffset, Math.floor(globalPos.width/scale), Math.floor(globalPos.height/scale))
+        if(word.enabled && puzzle.goal.indexOf(word.orth)!=-1){
+            ctx.fillStyle = "white"
+        }else{
+            ctx.fillStyle = "black"
+        }
+        var xOffset = globalPos.width/scale/2 - ctx.measureText(orth).width/2
+        var yOffset = globalPos.height/scale/2 - (ctx.measureText(orth).fontBoundingBoxDescent-ctx.measureText(orth).fontBoundingBoxAscent)/2
+
+        ctx.fillText(orth, Math.floor(localPos.x + xOffset)+horizontalOffset, Math.floor(localPos.y+yOffset)+verticalOffset)
+    }
+    return(canvas)
+}
+
+async function openShareMenu(){
+    if(navigator.share){
+        shareBoard()
+    }else{
+        openCopyMenu()
+    }
+}
+
+function openCopyMenu(){
+    var shareImage = boardToCanvas()
+    document.getElementById("shareMenu").style.display = "flex"
+    document.getElementById("copyButton").innerHTML = "Copy"
+    document.getElementById("sharePreview").src = shareImage.toDataURL()
+    document.getElementById("copyButton").onclick = ()=>{
+        copyCanvasContentsToClipboard(shareImage)
+        document.getElementById("copyButton").innerHTML = "Copied"
+    }
+}
+
+async function shareBoard(){
+
+    var shareImage = boardToCanvas()
+    var blob = await getBlobFromCanvas(shareImage)
+    var fileArray = [
+        new File(
+            [blob],
+            "inflect_share.png",
+            {
+                type:"image/png",
+                lastModified: new Date().getTime()
+            }
+        )
+    ]
+    const shareData = {
+        title: "Share Solution",
+        files: fileArray,
+        url: "https://greybeetle213.github.io/inflect"
+      };
+      navigator.share(shareData)
+
 }

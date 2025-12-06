@@ -161,4 +161,28 @@ function levenshtein(a, b) { //https://www.slingacademy.com/article/evaluating-s
     }
     
     return matrix[b.length][a.length];
+}
+async function getBlobFromCanvas(canvas) {
+    return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+        if (blob) {
+            resolve(blob);
+        } else {
+            reject(new Error("Canvas toBlob failed"));
+        }
+        });
+    });
     }
+async function copyCanvasContentsToClipboard(canvas) {
+    // Copy canvas to blob
+    try {
+        const blob = await getBlobFromCanvas(canvas);
+        // Create ClipboardItem with blob and it's type, and add to an array
+        const data = [new ClipboardItem({ [blob.type]: blob })];
+        // Write the data to the clipboard
+        await navigator.clipboard.write(data);
+        console.log("Copied");
+    } catch (error) {
+        console.log(error);
+    }
+}

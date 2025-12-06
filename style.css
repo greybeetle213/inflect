@@ -295,6 +295,9 @@ input:focus{
             background-color: lightgray;
         }
     }
+    #sharePreview{
+        height: 90vh;
+    }
 }
 
 @media (orientation: portrait){
@@ -468,6 +471,36 @@ input:focus{
         flex-direction: row;
         justify-content: space-between;
     }
+    #sharePreview{
+        width: 100%;
+    }
+    #mobileButtonBox{
+        text-wrap: nowrap;
+    }
+}
+#shareMenu{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#shareMenuStyler{
+    background-color: white;
+    border: 2px solid black;
+    box-shadow: -3px -3px 3px grey;
+    padding: 0.25em;
+}
+#shareToolBar{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 0.25em;
+    button{
+        font-size: xx-large;
+    }
 }
 #multichoiceStyler{
     display: flex;
@@ -502,6 +535,7 @@ input:focus{
 }
 #game{
     display: none;
+    overflow: hidden;
 }
 
 #tutorial{

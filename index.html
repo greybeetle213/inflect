@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, interactive-widget=resizes-content"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, interactive-widget=overlays-content"/>
 
     <title>/ɪnflɛkt/</title>
     <script src="dict/filteredConjs.js"></script>
@@ -117,11 +117,18 @@
                         <div id="goalText"></div>
                         <span>
                             <span id="mobileButtonBox">
+                                <button id="mobileShareButton" onclick="openShareMenu()" style="display: none;" class="iconButton">
+                                    <img src="icons/share-box-line.svg" alt="">
+                                </button>
                                 <button id="mobileReplayButton" onclick="deleteAll();play()" style="display: none;" class="iconButton">
                                     <img src="icons/reset-left-line.svg" alt="">
                                 </button>
-                                <button id="openMobileMenuButton" class="iconButton" onclick="openMobileMenu()"><img src="icons/menu-line.svg"></button>
-                                <button id="closeMobileMenuButton" class="iconButton" onclick="closeMobileMenu()" style="display: none;"><img src="icons/close-large-line.svg"></button>
+                                <button id="openMobileMenuButton" class="iconButton" onclick="openMobileMenu()">
+                                    <img src="icons/menu-line.svg">
+                                </button>
+                                <button id="closeMobileMenuButton" class="iconButton" onclick="closeMobileMenu()" style="display: none;">
+                                    <img src="icons/close-large-line.svg">
+                                </button>
                             </span>
                         </span>
                     </span>
@@ -133,6 +140,7 @@
                     </div>
                     <div id="toolBarButtons">
                         <span id="progressNewPuzzle"></span>
+                        <button onclick="openShareMenu()" style="display: none;" id="openShareMenu">Share</button>
                         <button onclick="deleteAll();play()" id="newPuzzle">New Puzzle</button>
                         <button onclick="openDictionary()" id="showDictionary">Dictionary</button>
                         <!-- <button onclick="displayAnswer(tree)">Show Computer's Solution</button> -->
@@ -150,13 +158,28 @@
             <div id="dictionary" class="canScroll" style="display: none;">
                 <div id="searchBarBox" class="canScroll">
                     <input type="text" placeholder="Search Word" id="dictionarySearch">
-                    <button onclick="closeDictionary();closeMobileMenu()" class="iconButton"><img src="icons/close-large-line.svg"></button>
+                    <button onclick="closeDictionary();closeMobileMenu()" class="iconButton">
+                        <img src="icons/close-large-line.svg">
+                    </button>
                 </div>
                 <span id="searchFailed">
                     Type something
                 </span>
                 <div id="searchResults" class="canScroll">
 
+                </div>
+            </div>
+        </div>
+        <div id="shareMenu" style="display: none;">
+            <div id="shareMenuStyler" class="canScroll">
+                <span id="shareToolBar" class="canScroll">
+                    <button id="copyButton" class="canScroll">Copy to Clipboard</button>
+                    <button class="iconButton" class="canScroll" onclick="document.getElementById('shareMenu').style.display='none'">
+                        <img class="canScroll" src="icons/close-large-line.svg" alt="">
+                    </button>
+                </span>
+                <div class="canScroll">
+                    <img class="canScroll" id="sharePreview" src="" alt="">
                 </div>
             </div>
         </div>
