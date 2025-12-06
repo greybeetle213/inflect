@@ -1396,8 +1396,7 @@ function openCopyMenu(){
 
 async function shareBoard(){
     var shareImage = boardToCanvas()
-    const dataUrl = shareImage.toDataURL();
-    const blob = await (await fetch(dataUrl)).blob();
+    var blob = await getBlobFromCanvas(shareImage)
     var fileArray = [
         new File(
             [blob],
