@@ -1403,7 +1403,7 @@ async function shareBoard(){
             [blob],
             "inflect_share.png",
             {
-                type:blob.type,
+                type:"image/png",
                 lastModified: new Date().getTime()
             }
         )
