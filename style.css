@@ -46,7 +46,6 @@ body{
 }
 img{
     height: 100%;
-    width: 100%;
 }
 .goalWord{
     background-color: green;
@@ -138,14 +137,24 @@ img{
     font-size: xx-large;
     height: 1.2em;
     width: 1.2em;
+    padding-left: 0.04em;
+    img{
+        height: 1em;
+        width: 1em;
+    }
 }
 #searchBarBox{
     display: flex;
     justify-content: stretch;
     input{
         flex-grow: 1;
+        flex-basis: 0;
+        min-width: 5%;
         font-size: x-large;
     }
+    /* button{
+        flex-grow: 1;
+    } */
 }
 input:focus{
     outline: 0;
@@ -386,6 +395,7 @@ input:focus{
     }
     #dictionary{
         width: 100%;
+        overflow: hidden;
         position: absolute;
         background-color: white;
         height: 100%;
