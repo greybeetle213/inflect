@@ -183,8 +183,8 @@ async function copyCanvasContentsToClipboard(canvas) {
         })];
         // Write the data to the clipboard
         await navigator.clipboard.write(data);
-        console.log("Copied");
     } catch (error) {
-        alert(error);
+        document.getElementById("sharePreview").select()
+        document.execCommand("copy")
     }
 }
