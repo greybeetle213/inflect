@@ -1403,15 +1403,14 @@ async function shareBoard(){
             [blob],
             "inflect_share.png",
             {
-                type:"image/png",
+                type:blob.type,
                 lastModified: new Date().getTime()
             }
         )
     ]
     const shareData = {
-        // title: "Share Solution",
+        title: "Share Solution",
         files: fileArray
-        // url: "https://greybeetle213.github.io/inflect"
       };
     if(navigator.canShare(shareData)){
         navigator.share(shareData)
