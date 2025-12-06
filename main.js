@@ -1410,8 +1410,8 @@ async function shareBoard(){
     ]
     const shareData = {
         title: "Share Solution",
-        files: fileArray,
-        url: "https://greybeetle213.github.io/inflect"
+        files: fileArray
+        // url: "https://greybeetle213.github.io/inflect"
       };
       navigator.share(shareData)
 
