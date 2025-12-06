@@ -1376,7 +1376,7 @@ function boardToCanvas(){
 }
 
 async function openShareMenu(){
-    if(navigator.canShare()){
+    if(navigator.share){
         shareBoard()
     }else{
         openCopyMenu()
@@ -1389,8 +1389,8 @@ function openCopyMenu(){
     document.getElementById("copyButton").innerHTML = "Copy"
     document.getElementById("sharePreview").src = shareImage.toDataURL()
     document.getElementById("copyButton").onclick = ()=>{
-        copyCanvasContentsToClipboard(shareImage)
         document.getElementById("copyButton").innerHTML = "Copied"
+        copyCanvasContentsToClipboard(shareImage)
     }
 }
 
@@ -1414,6 +1414,10 @@ async function shareBoard(){
         url: "https://greybeetle213.github.io/inflect"
       };
     
-    navigator.share(shareData)
+    if(navigator.canShare(shareData)){
+        navigator.share(shareData)
+    } else {
+        openCopyMenu()
+    }
 
 }
