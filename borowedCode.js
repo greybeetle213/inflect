@@ -184,6 +184,6 @@ async function copyCanvasContentsToClipboard(canvas) {
         // Write the data to the clipboard
         await navigator.clipboard.write(data);
     } catch (error) {
-        alert("There was an error. Just long press/right click the image and then hit copy. This only happens on some devices and I've spent way to long trying to fix it. If you know how to, please send help.")
+        alert("There was an error. Just long press/right click the image and then hit copy. This only happens on some devices and I've spent way too long trying to fix it. If you know how to, please send help.")
     }
 }
