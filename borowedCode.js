@@ -45,7 +45,6 @@ function dragElement(elmnt, clickFunction, moveFunction) { //https://www.w3schoo
 
     function closeDragElement() {
         // stop moving when mouse button is released:
-        console.log(startPos, elmnt.offsetLeft, elmnt.offsetTop)
         if(Math.abs(startPos.x-elmnt.offsetLeft)<3 && Math.abs(startPos.y-elmnt.offsetTop)<3){
             clickFunction()
         }
@@ -93,7 +92,7 @@ function connectLine(div1, div2){ //https://thewebdev.info/2021/09/12/how-to-dra
     const line = document.createElement("div")//"<div style='padding:0px; margin:0px; height:" + thickness + "px; background-color:" + color + "; line-height:1px; position:absolute; left:" + cx + "px; top:" + cy + "px; width:" + length + "px; -moz-transform:rotate(" + angle + "deg); -webkit-transform:rotate(" + angle + "deg); -o-transform:rotate(" + angle + "deg); -ms-transform:rotate(" + angle + "deg); transform:rotate(" + angle + "deg);' />";
     updateLine(line,div1,div2)
     line.classList.add("joinLine")
-    document.body.appendChild(line);
+    document.getElementById("lines").appendChild(line);
     return(line)
 }
 
@@ -186,4 +185,4 @@ async function copyCanvasContentsToClipboard(canvas) {
     } catch (error) {
         alert("There was an error. Just long press/right click the image and then hit copy. This only happens on some devices and I've spent way too long trying to fix it. If you know how to, please send help.")
     }
-}
+}   

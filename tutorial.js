@@ -2,15 +2,27 @@ hiddenButtonsForTutorial = []
 tutorial = false
 lastTutorialQuestion = false
 answerShown = false
+currentLevel = 1
+tutorialLevels = [playLevel1, playLevel2, playLevel3, playLevel4, playLevel5, playLevel6, playLevel7, playLevel8, playLevel9]
 function startTutorial(){
+    initTutorial()
+    playLevel1()
+    addToBrowserHistory()
+}
+
+function initTutorial(){
     tutorial = true
+    lastTutorialQuestion = false
     makeScrollShadows()
+    for(var elem of document.getElementsByClassName("tutorialInfo")){
+        elem.style.display = "none"
+    }
     document.getElementById("mainMenu").style.display = "none"
-    document.getElementById("tutorialInfo1").style.display = "flex"
     document.getElementById("openMobileMenuButton").style.display = "none"
     document.getElementById("toolBarButtons").style.display = "none"
-    document.getElementById("tutorialButtons").style.display = "flex"    
-    playLevel1()
+    document.getElementById("mobileButtonBox").style.display = "none"
+    document.getElementById("tutorialButtons").style.display = "flex"
+    document.getElementById("menuButtonTutorial").innerHTML = "Main Menu"    
 }
 
 function makeScrollShadows(){
@@ -24,6 +36,8 @@ function makeScrollShadows(){
 }
 
 function playLevel1(){
+    document.getElementById("tutorialInfo1").style.display = "flex"
+    currentLevel = 1
     answerShown = false
     hiddenButtonsForTutorial = ["toIPA", "merge", "changeForm", "split", "toOrth", "deletePhoneme", "deleteLetter"]
     var level1 = new wordTree()
@@ -35,12 +49,14 @@ function playLevel1(){
     document.getElementById("showAnswer").style.display = "none"
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo1").style.display = "none"
-        document.getElementById("tutorialInfo2").style.display = "flex"
+        deleteAll()
         playLevel2()
+        addToBrowserHistory()
     }
 }
 function playLevel2(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo2").style.display = "flex"
+    currentLevel = 2
     answerShown = false
     hiddenButtonsForTutorial = ["toIPA", "merge", "changeForm", "split", "toOrth", "deletePhoneme"]
     document.getElementById("nextTutorial").style.display = "none"
@@ -70,13 +86,15 @@ function playLevel2(attempt=0){
     document.getElementById("showAnswer").onclick = ()=>{showAnswerTutorial(level2, playLevel2, attempt)}
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo2").style.display = "none"
-        document.getElementById("tutorialInfo3").style.display = "flex"
+        deleteAll()
         playLevel3()
+        addToBrowserHistory()
     }
 }
 
 function playLevel3(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo3").style.display = "flex"
+    currentLevel = 3
     answerShown = false
     hiddenButtonsForTutorial = ["toIPA", "merge", "split", "toOrth", "deletePhoneme"]
     document.getElementById("nextTutorial").style.display = "none"
@@ -107,13 +125,15 @@ function playLevel3(attempt=0){
 
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo3").style.display = "none"
-        document.getElementById("tutorialInfo4").style.display = "flex"
+        deleteAll()
         playLevel4()
+        addToBrowserHistory()
     }
 }
 
 function playLevel4(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo4").style.display = "flex"
+    currentLevel = 4
     answerShown = false
     hiddenButtonsForTutorial = ["toIPA", "merge", "split", "toOrth", "deletePhoneme"]
     document.getElementById("nextTutorial").style.display = "none"
@@ -147,13 +167,15 @@ function playLevel4(attempt=0){
 
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo4").style.display = "none"
-        document.getElementById("tutorialInfo5").style.display = "flex"
+        deleteAll()
         playLevel5()
+        addToBrowserHistory()
     }
 }
 
 function playLevel5(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo5").style.display = "flex"
+    currentLevel = 5
     answerShown = false
     hiddenButtonsForTutorial = ["merge", "split", "deletePhoneme"]
     document.getElementById("nextTutorial").style.display = "none"
@@ -191,13 +213,15 @@ function playLevel5(attempt=0){
 
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo5").style.display = "none"
-        document.getElementById("tutorialInfo6").style.display = "flex"
+        deleteAll()
         playLevel6()
+        addToBrowserHistory()
     }
 }
 
 function playLevel6(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo6").style.display = "flex"
+    currentLevel = 6
     answerShown = false
     hiddenButtonsForTutorial = ["merge", "split"]
     document.getElementById("nextTutorial").style.display = "none"
@@ -243,13 +267,15 @@ function playLevel6(attempt=0){
 
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo6").style.display = "none"
-        document.getElementById("tutorialInfo7").style.display = "flex"
+        deleteAll()
         playLevel7()
+        addToBrowserHistory()
     }
 }
 
 function playLevel7(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo7").style.display = "flex"
+    currentLevel = 7
     answerShown = false
     hiddenButtonsForTutorial = ["merge", "split"]
     document.getElementById("nextTutorial").style.display = "none"
@@ -322,13 +348,15 @@ function playLevel7(attempt=0){
 
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo7").style.display = "none"
-        document.getElementById("tutorialInfo8").style.display = "flex"
+        deleteAll()
         playLevel8()
+        addToBrowserHistory()
     }
 }
 
 function playLevel8(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo8").style.display = "flex"
+    currentLevel = 8
     answerShown = false
     hiddenButtonsForTutorial = ["split"]
     document.getElementById("nextTutorial").style.display = "none"
@@ -378,13 +406,15 @@ function playLevel8(attempt=0){
 
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo8").style.display = "none"
-        document.getElementById("tutorialInfo9").style.display = "flex"
+        deleteAll()
         playLevel9()
+        addToBrowserHistory()
     }
 }
 
 function playLevel9(attempt=0){
-    deleteAll()
+    document.getElementById("tutorialInfo9").style.display = "flex"
+    currentLevel = 9
     lastTutorialQuestion = true
     answerShown = false
     hiddenButtonsForTutorial = []
@@ -434,7 +464,9 @@ function playLevel9(attempt=0){
     document.getElementById("nextTutorial").onclick = ()=>{
         document.getElementById("tutorialInfo8").style.display = "none"
         document.getElementById("tutorialInfo9").style.display = "flex"
+        deleteAll()
         playLevel9()
+        addToBrowserHistory()
     }
 }
 
@@ -442,6 +474,6 @@ function showAnswerTutorial(level, levelFunc, attempt){
     answerShown=true
     displayAnswer(level)
     document.getElementById("simalarPuzzle").style.display = "initial"
-    document.getElementById("simalarPuzzle").onclick  = ()=>(levelFunc(attempt+1))
+    document.getElementById("simalarPuzzle").onclick  = ()=>{deleteAll();levelFunc(attempt+1)}
     document.getElementById("showAnswer").style.display = "none"
 }

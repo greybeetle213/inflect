@@ -1,5 +1,9 @@
 puzzleSettings = ["easy",10]
 firstGame = true
+restored = false
+history.pushState({mainMenu:true, america:america},"")
+addEventListener("popstate", restoreFromHistory)
+
 function play(){
     document.getElementById("progressNewPuzzle").style.display="initial"
     document.getElementById("playButton").innerHTML = "Generating Puzzle..."
@@ -13,6 +17,28 @@ function playRandomPuzzle(){
     }
 }
 function init(tree){
+    if(!firstGame){
+        if(!tutorial){
+            addToBrowserHistory()
+        }
+        deleteAll()
+    }
+    openGame()
+    // tree = getBestPuzzle(...puzzleSettings)
+    wordsInPlay = new Set()
+    for(var word of tree.activeWords){
+        goalWords.push(word.orth)
+    }
+    for(var word of tree.roots){
+        startWords.push(word.orth)
+    }
+    puzzle = {startWords:startWords, goal:goalWords}
+    beginGame(puzzle)
+}
+
+function openGame(){
+    document.getElementById("mainMenu").style.display = "none"
+    document.getElementById("game").style.display = "initial"
     wordDiv = document.getElementById("words")
     multichoiceMenu = document.getElementById("multichoice")
     multichoicesDiv = document.getElementById("choices")
@@ -25,16 +51,39 @@ function init(tree){
     goalWords = [] 
     startWords = []
     draging = false
-    // tree = getBestPuzzle(...puzzleSettings)
-    wordsInPlay = new Set()
-    for(var word of tree.activeWords){
-        goalWords.push(word.orth)
+    if(firstGame){
+        addEventListener("resize", ()=>{makeElemOnscreen(document.getElementById("popupMenu"))})
+        document.addEventListener("mousedown", closePopupMenuWhenClickedOffOf)
+        document.addEventListener("touchstart", closePopupMenuWhenClickedOffOf)
+        document.addEventListener("touchstart", startPanOrZoom, {passive: false})
+        document.addEventListener("gesturestart", (e)=>{
+            if(e.target.className.indexOf("canScroll")==-1&&e.target.parentNode.className.indexOf("canScroll")==-1){
+                e.preventDefault()
+            }
+        }, {passive: false})
+        document.addEventListener("touchmove", panAndZoom, {passive: false})
+        multichoicesDiv.addEventListener("touchmove", manySelectTouchDrag)
+        document.addEventListener("touchend", zoomEnd)
+        document.addEventListener("wheel", zoomMouse)
+        document.addEventListener("mousedown", (e)=>{
+            if(e.target.className.indexOf("Word")==-1 && e.target.className.indexOf("Btn")==-1){
+                draging = true
+            }
+            clicking = true
+        })
+        document.addEventListener("mouseup", (e)=>{
+            draging = false
+            lastDrag = 0
+            clicking = false
+        })
+        document.addEventListener("mousemove", (e)=>{
+            if(draging){
+                panMouse(e)
+            }
+        })
+        document.getElementById("dictionarySearch").addEventListener("input",searchDictionary)
+        firstGame = false
     }
-    for(var word of tree.roots){
-        startWords.push(word.orth)
-    }
-    puzzle = {startWords:startWords, goal:goalWords}
-    beginGame(puzzle)
 }
 
 function displayAnswer(tree){
@@ -70,8 +119,6 @@ function beginGame(puzzleLocal){
     wordDiv.style.translate = panAmount.x + "px " + panAmount.y + "px"
     document.getElementById("progressNewPuzzle").style.display="none"
     puzzle = puzzleLocal
-    document.getElementById("mainMenu").style.display = "none"
-    document.getElementById("game").style.display = "initial"
     goalWords = puzzle.goal
     clicking = false
     updateGoalText()
@@ -88,38 +135,8 @@ function beginGame(puzzleLocal){
     clickOpenedPopupMenu = false
     popupMenuWordId = 0
     clickFunction = (id)=>{popupMenu(id)}
-    if(firstGame){
-        addEventListener("resize", ()=>{makeElemOnscreen(document.getElementById("popupMenu"))})
-        document.addEventListener("mousedown", closePopupMenuWhenClickedOffOf)
-        document.addEventListener("touchstart", closePopupMenuWhenClickedOffOf)
-        document.addEventListener("touchstart", startPanOrZoom, {passive: false})
-        document.addEventListener("gesturestart", (e)=>{
-            if(e.target.className.indexOf("canScroll")==-1&&e.target.parentNode.className.indexOf("canScroll")==-1){
-                e.preventDefault()
-            }
-        }, {passive: false})
-        document.addEventListener("touchmove", panAndZoom, {passive: false})
-        multichoicesDiv.addEventListener("touchmove", manySelectTouchDrag)
-        document.addEventListener("touchend", zoomEnd)
-        document.addEventListener("wheel", zoomMouse)
-        document.addEventListener("mousedown", (e)=>{
-            if(e.target.className.indexOf("Word")==-1 && e.target.className.indexOf("Btn")==-1){
-                draging = true
-            }
-            clicking = true
-        })
-        document.addEventListener("mouseup", (e)=>{
-            draging = false
-            lastDrag = 0
-            clicking = false
-        })
-        document.addEventListener("mousemove", (e)=>{
-            if(draging){
-                panMouse(e)
-            }
-        })
-        document.getElementById("dictionarySearch").addEventListener("input",searchDictionary)
-        firstGame = false
+    if(!tutorial){
+        updateBrowserHistory()
     }
 }
 
@@ -256,7 +273,6 @@ function createChildWord(parentId, orth, data, parentId2){
     buttonDict[parentId].elem.classList.add("disabled")
     var newWordId = createWord(orth, data)
     var offset = getOffset(buttonDict[parentId].elem)
-    console.log(Number(buttonDict[parentId].elem.style.top.slice(0,-2)), buttonDict[parentId].elem.style.top)
     buttonDict[newWordId].elem.style.top = (Number(buttonDict[parentId].elem.style.top.slice(0,-2)) + offset.height*2/zoomScale) + "px"
     buttonDict[newWordId].elem.style.left = buttonDict[parentId].elem.style.left
     line = connectLine(buttonDict[parentId].elem, buttonDict[newWordId].elem)
@@ -264,8 +280,6 @@ function createChildWord(parentId, orth, data, parentId2){
     buttonDict[newWordId].lines.push({line:line,connectedToId:parentId})
     buttonDict[parentId].children.push(newWordId)
     buttonDict[newWordId].parents.push(parentId)
-    moveLines(newWordId)
-    updateGoalText()
     if(parentId2){
         secondLine = connectLine(buttonDict[parentId2].elem, buttonDict[newWordId].elem)
         buttonDict[parentId2].lines.push({line:secondLine, connectedToId:newWordId})
@@ -275,6 +289,7 @@ function createChildWord(parentId, orth, data, parentId2){
         buttonDict[newWordId].lines.push({line:secondLine, connectedToId:parentId2})
         buttonDict[newWordId].parents.push(parentId2)
     }
+    updateGoalText()
     return(newWordId)
 }
 
@@ -897,13 +912,10 @@ function updateGoalText(){
             elem.style.color="white"
         }
         if(lastTutorialQuestion){
-            lastTutorialQuestion = false
-            tutorial = false
             document.getElementById("showAnswer").style.display = "none"
             document.getElementById("nextTutorial").style.display = "none"
             document.getElementById("menuButtonTutorial").innerHTML = "Finish"
-        }
-        if(tutorial){
+        }else if(tutorial){
             document.getElementById("nextTutorial").style.display = "initial"
             document.getElementById("showAnswer").style.display = "none"
         }else{
@@ -917,6 +929,9 @@ function updateGoalText(){
         document.getElementById("mobileReplayButton").style.display = "none"
         document.getElementById("openShareMenu").style.display = "none"
         document.getElementById("mobileShareButton").style.display = "none"
+    }
+    if(!tutorial){
+        updateBrowserHistory()
     }
 }
 
@@ -1323,7 +1338,6 @@ function boardToCanvas(){
             var connectedLocalPos = globalToLocal(connectGlobalPos.left, connectGlobalPos.top)
             var connectedLocalSize = {width: connectGlobalPos.width/scale, height:connectGlobalPos.height/scale}
 
-            console.log(connectGlobalPos, 'line')
             ctx.beginPath()
             ctx.moveTo(localPos.x+localSize.width/2 + horizontalOffset, localPos.y+localSize.height/2 + verticalOffset)
             ctx.lineTo(connectedLocalPos.x+connectedLocalSize.width/2 + horizontalOffset, connectedLocalPos.y+connectedLocalSize.height/2 + verticalOffset)
@@ -1420,4 +1434,116 @@ async function shareBoard(){
         openCopyMenu()
     }
 
+}
+
+function addToBrowserHistory(){
+    history.pushState({}, "")
+    updateBrowserHistory()
+}
+
+function updateBrowserHistory(){
+    var boardState = []
+    for(var key of Object.keys(buttonDict)){
+        buttonDict[key].elem.id = "wordBtn"+key
+        var lines = []
+        for(var line of buttonDict[key].lines){
+            var ids = [key, line.connectedToId]
+            ids.sort()
+            line.line.id = "line"+ids.join("-")
+            lines.push({connectedToId:line.connectedToId, lineId:line.line.id})
+        }
+        boardState.push({id:key, orth:buttonDict[key].orth, data:buttonDict[key].data, lines:lines, enabled:buttonDict[key].enabled, children:buttonDict[key].children, parents:buttonDict[key].parents})
+    }
+    var words = document.getElementById("words").innerHTML
+    history.replaceState({
+        isOldPuzzle:true,
+        boardState: boardState,
+        words: words,
+        lines: document.getElementById("lines").innerHTML,
+        panAmount: panAmount,
+        zoomScale:zoomScale,
+        puzzle:puzzle,
+        currentIdMax:currentIdMax,
+        tutorial:tutorial,
+        currentLevel:currentLevel
+    }, "")
+}
+
+function restoreFromHistory(e){
+    restored = true
+    if(e.state.mainMenu){
+        openMainMenu()
+    }
+    if(e.state.tutorial){
+        if(tutorial){
+            deleteAll()
+        }
+        initTutorial()
+        tutorialLevels[e.state.currentLevel-1]()
+        return
+    }
+    if(!e.state.isOldPuzzle){
+        return
+    }
+    openGame()
+    document.getElementById("words").innerHTML = e.state.words
+    document.getElementById("lines").innerHTML = e.state.lines
+    requestAnimationFrame(()=>{
+        currentIdMax = e.state.currentIdMax
+        puzzle = e.state.puzzle
+        zoomScale = e.state.zoomScale
+        panAmount = e.state.panAmount
+        goalWords = puzzle.goal
+        wordsInPlay = new Set()
+        buttonDict = {}
+        for(let word of e.state.boardState){
+            buttonDict[word.id] = {
+                elem:document.getElementById("wordBtn"+word.id),
+                orth: word.orth,
+                data: word.data,
+                enabled: word.enabled,
+                parents: word.parents,
+                children: word.children,
+                lines: []
+            }
+            for(var line of word.lines){
+                buttonDict[word.id].lines.push({line:document.getElementById(line.lineId), connectedToId:line.connectedToId})
+            }
+            dragElement(buttonDict[word.id].elem, ()=>{
+                requestAnimationFrame(()=>(popupMenu(word.id)))
+            }, ()=>{
+                moveLines(word.id)
+            })
+            if(word.enabled){
+                wordsInPlay.add(word.orth)
+            }
+        }
+        wordDiv.style.transform = "scale("+zoomScale+")"
+        wordDiv.style.translate = panAmount.x + "px " + panAmount.y + "px"
+        moveAllLines()
+        updateGoalText()
+    })
+}
+
+function replay(){
+    play()
+}
+function backToMainMenu(){
+    openMainMenu()
+    history.pushState({mainMenu:true, america:america},"")
+}
+function openMainMenu(){
+    document.getElementById("game").style.display = "none"
+    document.getElementById("mainMenu").style.display = "flex"
+    document.getElementById("playButton").innerHTML = "Play!"
+    for(var elem of document.getElementsByClassName("tutorialInfo")){
+        elem.style.display = "none"
+    }
+    document.getElementById("playButton").innerHTML = "Play!"
+    document.getElementById("openMobileMenuButton").style.display = "initial"
+    document.getElementById("toolBarButtons").style.display = "inital"
+    document.getElementById("mobileButtonBox").style.display = "inital"
+    closeDictionary()
+    tutorial = false
+    lastTutorialQuestion = false
 }

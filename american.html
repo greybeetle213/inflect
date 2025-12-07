@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, interactive-widget=resizes-content"/>
 
     <title>/ɪnfɫɛkt/</title>
+    <script>america=true</script>
+
     <script src="dict_US/filteredConjs.js"></script>
     <script src="dict_US/orthToIpa.js"></script>
     <script src="dict_US/ipaToOrth.js"></script>
@@ -16,7 +18,6 @@
     <script src="makePuzzle.js"></script>
     <script src="tutorial.js"></script>
     <script src="main.js"></script>
-    <script>america=true</script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body onload="selectDifficulty('begginer')">
@@ -62,6 +63,7 @@
     </div>
     <div id="game">
         <div id="words"></div>
+        <div id="lines"></div>
         <div id="popupMenu">
             <div id="standardPopupButtons">
                 <button id="toIPA" class="popupBtn" onclick="toggleIPA(popupMenuWordId)">
@@ -119,7 +121,7 @@
                                 <button id="mobileShareButton" onclick="openShareMenu()" style="display: none;" class="iconButton">
                                     <img src="icons/share-box-line.svg" alt="">
                                 </button>
-                                <button id="mobileReplayButton" onclick="deleteAll();play()" style="display: none;" class="iconButton">
+                                <button id="mobileReplayButton" onclick="replay()" style="display: none;" class="iconButton">
                                     <img src="icons/reset-left-line.svg" alt="">
                                 </button>
                                 <button id="openMobileMenuButton" class="iconButton" onclick="openMobileMenu()"><img src="icons/menu-line.svg"></button>
@@ -131,21 +133,21 @@
                         <button onclick="displayAnswer(tree)" id="showAnswer" style="display: none;">Show Answer</button>
                         <button id="simalarPuzzle" style="display: none;">Try Again</button>
                         <button id="nextTutorial" style="display: none;">Next</button>
-                        <button onclick="window.location.reload()" id="menuButtonTutorial">Main Menu</button>
+                        <button onclick="backToMainMenu()" id="menuButtonTutorial">Main Menu</button>
                     </div>
                     <div id="toolBarButtons">
                         <span id="progressNewPuzzle"></span>
                         <button onclick="openShareMenu()" style="display: none;" id="openShareMenu">Share</button>
-                        <button onclick="deleteAll();play()" id="newPuzzle">New Puzzle</button>
+                        <button onclick="replay()" id="newPuzzle">New Puzzle</button>
                         <button onclick="openDictionary()" id="showDictionary">Dictionary</button>
                         <!-- <button onclick="displayAnswer(tree)">Show Computer's Solution</button> -->
-                        <button onclick="window.location.reload()" id="menuButton">Main Menu</button>
+                        <button onclick="backToMainMenu()" id="menuButton">Main Menu</button>
                     </div>
                     <div id="mobileMenu" style="display: none;">
                         <hr>
-                        <button onclick="closeMobileMenu();deleteAll();play()">New Puzzle</button>
+                        <button onclick="closeMobileMenu();replay()">New Puzzle</button>
                         <button onclick="openDictionary()">Open Dictionary</button>
-                        <button onclick="window.location.reload()">Back to Main Menu</button>
+                        <button onclick="backToMainMenu()">Back to Main Menu</button>
                     </div>
                 </div>
                 <hr>
