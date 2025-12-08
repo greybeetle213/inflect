@@ -10,6 +10,7 @@ function play(){
     requestAnimationFrame(playRandomPuzzle)
 }
 function playRandomPuzzle(){
+    document.getElementById("tutorialButtons").style.display=false
     if(puzzleSettings == "custom"){
         init(getBestPuzzle(customDiff, customTryNum, Number(document.getElementById("startCountCustom").value),Number(document.getElementById("goalCountCustom").value)))
     }else{
@@ -1533,16 +1534,15 @@ function backToMainMenu(){
     history.pushState({mainMenu:true, america:america},"")
 }
 function openMainMenu(){
+    if(tutorial){
+        location.reload()
+    }
     document.getElementById("game").style.display = "none"
     document.getElementById("mainMenu").style.display = "flex"
     document.getElementById("playButton").innerHTML = "Play!"
     for(var elem of document.getElementsByClassName("tutorialInfo")){
         elem.style.display = "none"
     }
-    document.getElementById("playButton").innerHTML = "Play!"
-    document.getElementById("openMobileMenuButton").style.display = "initial"
-    document.getElementById("toolBarButtons").style.display = "inital"
-    document.getElementById("mobileButtonBox").style.display = "inital"
     closeDictionary()
     tutorial = false
     lastTutorialQuestion = false
