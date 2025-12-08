@@ -1170,6 +1170,8 @@ function closeDictionary(){
 }
 function searchDictionary(){
     var search = document.getElementById("dictionarySearch").value
+    search = search.toLowerCase()
+    search = search.replaceAll(" ", "")
     document.getElementById("searchResults").innerHTML = ""
     if(!search){
         document.getElementById("searchFailed").innerHTML = "Type something"
