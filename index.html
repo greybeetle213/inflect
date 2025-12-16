@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, interactive-widget=overlays-content"/>
-
+    <link rel="manifest" href="manifest.json"/>
     <title>/ɪnflɛkt/</title>
     <script>america=false</script>
-    <script src="dict/filteredConjs.js"></script>
-    <script src="dict/orthToIpa.js"></script>
-    <script src="dict/ipaToOrth.js"></script>
+    <script src="load.js"></script>
     <script src="dict/extras.js"></script>
-    <script src="dict/orthTree.js"></script>
-    <script src="dict/ipaTree.js"></script>
-    <script src="dict/wordList.js"></script>
     <script src="borowedCode.js"></script>
     <script src="makePuzzle.js"></script>
     <script src="tutorial.js"></script>
     <script src="main.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel=icon href="icons/favicon.png">
 </head>
 <body onload="selectDifficulty('begginer')">
     <div id="mainMenu">
@@ -116,7 +112,7 @@
                 <div id="toolBarContent">
                     <span id="mobileTopBar">
                         <div id="goalText"></div>
-                        <span>
+                        <span id="mobileButtonBoxHidable">
                             <span id="mobileButtonBox">
                                 <button id="mobileShareButton" onclick="openShareMenu()" style="display: none;" class="iconButton">
                                     <img src="icons/share-box-line.svg" alt="">

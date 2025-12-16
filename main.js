@@ -111,6 +111,7 @@ function displayAnswer(tree){
     addEventListener("resize", makeAllOnscreen)
     puzzle = {goal:goalWords}
     tree.showAnswer()
+    centerWords()
 }
 
 function beginGame(puzzleLocal){
@@ -133,12 +134,23 @@ function beginGame(puzzleLocal){
             buttonDict[createdWordId].elem.style.top = newWordOffset.top + newWordOffset.height + 5 + "px"
         }
     })
+    centerWords()
     clickOpenedPopupMenu = false
     popupMenuWordId = 0
     clickFunction = (id)=>{popupMenu(id)}
     if(!tutorial){
         updateBrowserHistory()
     }
+}
+
+function centerWords(){
+    const html = document.getElementById("html")
+    var bounds = getWordBounds()
+    var boundsCenterX = (bounds.left + bounds.right)/2
+    var centerX = html.clientWidth/2
+    panAmount.x += centerX - boundsCenterX
+    wordDiv.style.translate = panAmount.x + "px " + panAmount.y + "px"
+    moveAllLines()
 }
 
 function addTieBar(symbol){
@@ -998,8 +1010,8 @@ function getDifferanceBetweenPoints(x1,y1,x2,y2){
 }
 
 function getZoomChange(e){
-    var p1 = e.changedTouches[0]
-    var p2 = e.changedTouches[1]
+    var p1 = e.touches[0]
+    var p2 = e.touches[1]
     var oldDistance = getDifferanceBetweenPoints(touchDict[p1.identifier].lastX,touchDict[p1.identifier].lastY,touchDict[p2.identifier].lastX,touchDict[p2.identifier].lastY)
     var newDistance = getDifferanceBetweenPoints(p1.clientX, p1.clientY, p2.clientX, p2.clientY)
 
@@ -1473,9 +1485,15 @@ function updateBrowserHistory(){
 }
 
 function restoreFromHistory(e){
+    if(document.getElementById("dictionary").style.display == "flex"){
+        closeDictionary()
+        addToBrowserHistory()
+        return
+    }
     restored = true
     if(e.state.mainMenu){
         openMainMenu()
+        return
     }
     if(e.state.tutorial){
         if(tutorial){
@@ -1537,7 +1555,17 @@ function backToMainMenu(){
 }
 function openMainMenu(){
     if(tutorial){
-        location.reload()
+        document.getElementById("mainMenu").removeAttribute("style")
+        document.getElementById("openMobileMenuButton").removeAttribute("style")
+        document.getElementById("toolBarButtons").removeAttribute("style")
+        document.getElementById("mobileButtonBox").removeAttribute("style")
+        document.getElementById("newPuzzle").removeAttribute("style")
+        document.getElementById("tutorialButtons").style.display = "none"
+        hiddenButtonsForTutorial = []
+        tutorial = false
+        lastTutorialQuestion = false
+        answerShown = false
+        currentLevel = 1
     }
     document.getElementById("game").style.display = "none"
     document.getElementById("mainMenu").style.display = "flex"

@@ -1,44 +1,46 @@
-wordSet = new Set(wordList)
+function proccessDictFiles(){
+    wordSet = new Set(wordList)
 
-ipaWordSet = new Set()
+    ipaWordSet = new Set()
 
-alreadyComptedVarientsDict = {}
+    alreadyComptedVarientsDict = {}
 
-alreadyComptedVarientsSet = new Set()
+    alreadyComptedVarientsSet = new Set()
 
-for(var word of wordSet){
-    if(!orthToIpa[word]){
-        continue
-    }
-    for(var ipaWord of orthToIpa[word]){
-        ipaWordSet.add(ipaWord.join())
-    }
-}
-
-conjDict = {}
-conjDict.constructor = undefined
-for(var forms of conjs){
-    for(var form of forms){
-        if(!conjDict[form]){
-            conjDict[form] = new Set(forms)
-        }else{
-            conjDict[form] = conjDict[form].union(new Set(forms))
+    for(var word of wordSet){
+        if(!orthToIpa[word]){
+            continue
+        }
+        for(var ipaWord of orthToIpa[word]){
+            ipaWordSet.add(ipaWord.join())
         }
     }
-}
 
-orthToIpaSetValues = {}
-for(var key of Object.keys(orthToIpa)){
-    orthToIpaSetValues[key] = new Set()
-    for(var word of orthToIpa[key]){
-        orthToIpaSetValues[key].add(word.join(","))        
+    conjDict = {}
+    conjDict.constructor = undefined
+    for(var forms of conjs){
+        for(var form of forms){
+            if(!conjDict[form]){
+                conjDict[form] = new Set(forms)
+            }else{
+                conjDict[form] = conjDict[form].union(new Set(forms))
+            }
+        }
     }
-}
 
-badWordRoots = ["ring", "inning", "is", "ding", "dings", "did", "sing", "sings", "die", "died", "dies", "read", "is", "whir", "ted"]
-badWords = new Set()
-for(var word of badWordRoots){
-    badWords.add(word)
+    orthToIpaSetValues = {}
+    for(var key of Object.keys(orthToIpa)){
+        orthToIpaSetValues[key] = new Set()
+        for(var word of orthToIpa[key]){
+            orthToIpaSetValues[key].add(word.join(","))        
+        }
+    }
+
+    badWordRoots = ["ring", "inning", "is", "ding", "dings", "did", "sing", "sings", "die", "died", "dies", "read", "is", "whir", "ted"]
+    badWords = new Set()
+    for(var word of badWordRoots){
+        badWords.add(word)
+    }
 }
 
 function applyRandomFunction(functions, args=[]){
@@ -178,7 +180,7 @@ class wordTree{
 
     spellAllActiveWords(){
         var attemptAgain = false
-        for(word of [...this.activeWords]){
+        for(var word of [...this.activeWords]){
             if(word.type == "ipa"){
                 var attempt = word.getRandomFromIPA()
                 if(!attempt){
@@ -395,7 +397,7 @@ class wordNodeOrth{
         var options = []
         var wordList = getPossibleDeletions([...this.orth], orthTree).union(conjDict[this.orth]||new Set()).difference(this.tree.usedWordsSet)
         for(var unsplitWord of wordList){
-            word = unsplitWord.split("")
+            var word = unsplitWord.split("")
             var loopNum = word.length
             var currentStart = ""
             for(var i = 0; i < loopNum; i++){
@@ -494,7 +496,7 @@ class wordNodeIPA extends wordNodeOrth{
         var wordList = getPossibleDeletions([...this.orth], ipaTree, ",").difference(this.tree.usedWordsSet)
         for(var unsplitIpaWord of wordList){
             var currentStart = []
-            ipaWord = unsplitIpaWord.split(",")
+            var ipaWord = unsplitIpaWord.split(",")
             var loopNum = ipaWord.length
             for(var i = 0; i < loopNum; i++){
                 currentStart.push(ipaWord.shift())
