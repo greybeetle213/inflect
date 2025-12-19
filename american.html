@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel=icon href="icons/favicon.png">
 </head>
-<body onload="selectDifficulty('begginer')">
+<body onload="onBodyLoad()">
     <div id="mainMenu">
         <h1>/ɪnfɫɛkt/</h1>
         <div id="difficultySelector" class="mainMenuMultiChoice">
@@ -48,7 +48,7 @@
         <div class="mainMenuMultiChoice">
             Dialect:
             <br class="showOnMobile">
-            <button class="disabled" onclick="window.location.href='index.html'">RP English</button>
+            <button class="disabled" onclick="localStorage.setItem('dialect', 'rp');window.location.href='index.html'">RP English</button>
             <button>General American English</button>
         </div>
         <div>
@@ -56,6 +56,15 @@
             <button class="menuButton" onclick="startTutorial()">Tutorial</button>
         </div>
         <span id="progress"></span>
+        <div class="showOnMobile" style="margin-top: 1em;">
+            Font Size:
+            <button class="iconButton fontSizeScale" onclick="increaseFontSize()">
+                <img src="icons/add-large-line.svg" alt="">
+            </button>
+            <button onclick="decreaseFontSize()" class="iconButton fontSizeScale">
+                <img src="icons/subtract-line.svg" alt="">
+            </button>
+        </div>
     </div>
     <div id="game">
         <div id="words"></div>
@@ -96,7 +105,7 @@
             </div>
             <div id="multichoice" class="canScroll popupBtnBox" style="display: none;">
                 <div id="multichoiceStyler" class="canScroll popupBtnBox">
-                    <div id="choices" class="canScroll popupBtnBox"></div>
+                    <div id="choices" class="canScroll popupBtnBox fontSizeScale"></div>
                     <div class="canScroll popupBtnBox">
                         <span class="hoverBox">
                             <span class="hoverText popupBtnBox" id="manySelectHover"></span>
@@ -114,14 +123,14 @@
                         <div id="goalText"></div>
                         <span>
                             <span id="mobileButtonBox">
-                                <button id="mobileShareButton" onclick="openShareMenu()" style="display: none;" class="iconButton">
+                                <button id="mobileShareButton" onclick="openShareMenu()" style="display: none;" class="iconButton fontSizeScale">
                                     <img src="icons/share-box-line.svg" alt="">
                                 </button>
-                                <button id="mobileReplayButton" onclick="replay()" style="display: none;" class="iconButton">
+                                <button id="mobileReplayButton" onclick="replay()" style="display: none;" class="iconButton fontSizeScale">
                                     <img src="icons/reset-left-line.svg" alt="">
                                 </button>
-                                <button id="openMobileMenuButton" class="iconButton" onclick="openMobileMenu()"><img src="icons/menu-line.svg"></button>
-                                <button id="closeMobileMenuButton" class="iconButton" onclick="closeMobileMenu()" style="display: none;"><img src="icons/close-large-line.svg"></button>
+                                <button id="openMobileMenuButton" class="iconButton fontSizeScale" onclick="openMobileMenu()"><img src="icons/menu-line.svg"></button>
+                                <button id="closeMobileMenuButton" class="iconButton fontSizeScale" onclick="closeMobileMenu()" style="display: none;"><img src="icons/close-large-line.svg"></button>
                             </span>
                         </span>
                     </span>
@@ -151,7 +160,7 @@
             <div id="dictionary" class="canScroll" style="display: none;">
                 <div id="searchBarBox" class="canScroll">
                     <input type="text" placeholder="Search Word" id="dictionarySearch">
-                    <button onclick="closeDictionary();closeMobileMenu()" class="iconButton"><img src="icons/close-large-line.svg"></button>
+                    <button onclick="closeDictionary();closeMobileMenu()" class="iconButton fontSizeScale"><img src="icons/close-large-line.svg"></button>
                 </div>
                 <span id="searchFailed">
                     Type something
@@ -165,7 +174,7 @@
             <div id="shareMenuStyler" class="canScroll">
                 <span id="shareToolBar" class="canScroll">
                     <button id="copyButton" class="canScroll">Copy to Clipboard</button>
-                    <button class="iconButton" class="canScroll" onclick="document.getElementById('shareMenu').style.display='none'">
+                    <button class="iconButton fontSizeScale" class="canScroll" onclick="document.getElementById('shareMenu').style.display='none'">
                         <img class="canScroll" src="icons/close-large-line.svg" alt="">
                     </button>
                 </span>

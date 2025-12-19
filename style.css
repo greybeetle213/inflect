@@ -134,7 +134,6 @@ img{
     padding: 0%;
 }
 .iconButton{
-    font-size: xx-large;
     height: 1.2em;
     width: 1.2em;
     padding-left: 0.04em;
@@ -513,6 +512,7 @@ input:focus{
     padding: 0.1em;
     width: max-content;
     max-width: 95vw;
+    font-size: xx-large;
     button{
         font-size: xx-large;
     }
@@ -528,6 +528,7 @@ input:focus{
         padding-right: 0.05em;
         background-color: #f0f0f0;
         border-radius: 0.1em;
+        font-size: inherit;
     }
 }
 .menuButton{
@@ -559,7 +560,10 @@ input:focus{
     justify-content: center;
     z-index: -1;
     button{
-        width: 9em;
+        width: min-content;
+        span{
+            width: 9em;
+        }
         pointer-events: none;
     }
 }

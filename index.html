@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel=icon href="icons/favicon.png">
 </head>
-<body onload="selectDifficulty('begginer')">
+<body onload="onBodyLoad()">
     <div id="mainMenu">
         <h1>/ɪnflɛkt/</h1>
         <div id="difficultySelector" class="mainMenuMultiChoice">
@@ -27,15 +27,12 @@
             <button id="hard" onclick="selectDifficulty('hard')">Hard</button>
             <button id="custom" onclick="selectDifficulty('custom')">Custom</button>
             <div id="customDificulty" style="display: none;">
-                <br>
                 <span class="numberInput">
                     Starting Word Count: <input value="2" min="1" max="5" onchange="constrainInputNumber('startCountCustom')" id="startCountCustom" type="number">
                 </span>
-                <br>
                 <span class="numberInput">
                     Goal Word Count: <input value="1" min="1" max="5" onchange="constrainInputNumber('goalCountCustom')" id="goalCountCustom" type="number">
                 </span>
-                <br>
                 <span>
                     Steps:
                     <button id="veryFewSteps" onclick="selectStepNum('veryFewSteps')">Very Few</button>
@@ -49,13 +46,22 @@
             Dialect:
             <br class="showOnMobile">
             <button>RP English</button>
-            <button class="disabled" onclick="window.location.href='american.html'">General American English</button>
+            <button class="disabled" onclick="localStorage.setItem('dialect', 'american');window.location.href='american.html'">General American English</button>
         </div>
         <div>
             <button id="playButton" class="menuButton" onclick="requestAnimationFrame(play)">Play!</button>
             <button class="menuButton" onclick="startTutorial()">Tutorial</button>
         </div>
         <span id="progress"></span>
+        <div class="showOnMobile" style="margin-top: 1em;">
+            Font Size:
+            <button class="iconButton fontSizeScale" onclick="increaseFontSize()">
+                <img src="icons/add-large-line.svg" alt="">
+            </button>
+            <button onclick="decreaseFontSize()" class="iconButton fontSizeScale">
+                <img src="icons/subtract-line.svg" alt="">
+            </button>
+        </div>
     </div>
     <div id="game">
         <div id="words"></div>
@@ -96,7 +102,7 @@
             </div>
             <div id="multichoice" class="canScroll popupBtnBox" style="display: none;">
                 <div id="multichoiceStyler" class="canScroll popupBtnBox">
-                    <div id="choices" class="canScroll popupBtnBox"></div>
+                    <div id="choices" class="canScroll popupBtnBox fontSizeScale"></div>
                     <div class="canScroll popupBtnBox">
                         <span class="hoverBox">
                             <span class="hoverText popupBtnBox" id="manySelectHover"></span>
@@ -114,16 +120,16 @@
                         <div id="goalText"></div>
                         <span id="mobileButtonBoxHidable">
                             <span id="mobileButtonBox">
-                                <button id="mobileShareButton" onclick="openShareMenu()" style="display: none;" class="iconButton">
+                                <button id="mobileShareButton" onclick="openShareMenu()" style="display: none;" class="iconButton fontSizeScale">
                                     <img src="icons/share-box-line.svg" alt="">
                                 </button>
-                                <button id="mobileReplayButton" onclick="replay()" style="display: none;" class="iconButton">
+                                <button id="mobileReplayButton" onclick="replay()" style="display: none;" class="iconButton fontSizeScale">
                                     <img src="icons/reset-left-line.svg" alt="">
                                 </button>
-                                <button id="openMobileMenuButton" class="iconButton" onclick="openMobileMenu()">
+                                <button id="openMobileMenuButton" class="iconButton fontSizeScale" onclick="openMobileMenu()">
                                     <img src="icons/menu-line.svg">
                                 </button>
-                                <button id="closeMobileMenuButton" class="iconButton" onclick="closeMobileMenu()" style="display: none;">
+                                <button id="closeMobileMenuButton" class="iconButton fontSizeScale" onclick="closeMobileMenu()" style="display: none;">
                                     <img src="icons/close-large-line.svg">
                                 </button>
                             </span>
@@ -155,7 +161,7 @@
             <div id="dictionary" class="canScroll" style="display: none;">
                 <div id="searchBarBox" class="canScroll">
                     <input type="text" placeholder="Search Word" id="dictionarySearch">
-                    <button onclick="closeDictionary();closeMobileMenu()" class="iconButton">
+                    <button onclick="closeDictionary();closeMobileMenu()" class="iconButton fontSizeScale">
                         <img src="icons/close-large-line.svg">
                     </button>
                 </div>
@@ -171,7 +177,7 @@
             <div id="shareMenuStyler" class="canScroll">
                 <span id="shareToolBar" class="canScroll">
                     <button id="copyButton" class="canScroll">Copy to Clipboard</button>
-                    <button class="iconButton" class="canScroll" onclick="document.getElementById('shareMenu').style.display='none'">
+                    <button class="iconButton fontSizeScale" class="canScroll" onclick="document.getElementById('shareMenu').style.display='none'">
                         <img class="canScroll" src="icons/close-large-line.svg" alt="">
                     </button>
                 </span>
