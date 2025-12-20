@@ -915,10 +915,15 @@ function updateGoalText(){
         var index = goalText.indexOf(word.orth)
         if(index != -1){
             completedWordCount ++
-            goalText[index] = "<span class='completedGoal'>"+goalText[index]+"</span>"
+            goalText[index] = "<span class='completedGoal' onclick='searchWord(\""+goalText[index]+"\")'>"+goalText[index]+"</span>"
         }
     }
-
+    for(var i = 0; i<goalText.length; i++){
+        if(goalText[i].indexOf("<")==-1){
+            goalText[i] = "<span onclick='searchWord(\""+goalText[i]+"\")'>"+goalText[i]+"</span>"
+        }
+    }
+    console.log(goalText)
     goalPrefix = "GOAL"
     if(puzzle.goal.length > 1){
         goalPrefix += "S"
@@ -1175,6 +1180,12 @@ function limitPan(){
     }
     wordDiv.style.translate = panAmount.x + "px " + panAmount.y + "px"
     moveAllLines()
+}
+
+function searchWord(word){
+    openDictionary()
+    document.getElementById("dictionarySearch").value = word
+    searchDictionary()
 }
 
 function openDictionary(){
