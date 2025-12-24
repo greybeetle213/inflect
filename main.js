@@ -20,7 +20,7 @@ function updateDailyTimer(){
     var hoursSinceReset = miliSeconds/1000/60/60
     var hoursToReset = 24 - hoursSinceReset
     var minutes = Math.floor((hoursToReset - Math.floor(hoursToReset))*60)
-    document.getElementById("dailyTimer").innerHTML = Math.floor(hoursToReset) + ":" + minutes
+    document.getElementById("dailyTimer").innerHTML = Math.floor(hoursToReset) + "h " + minutes + "m"
 }
 function playRandom(){
     daily = false
