@@ -53,13 +53,19 @@ img{
 }
 
 .ipaWord, .transcriptions{
-    letter-spacing:0.05em;
+    span{
+        letter-spacing:0.05em;
+    }
 }
-.ipaWord::before{
-    content: "/";
+.ipaWord{
+    span::before{
+        content: "/";
+    }
 }
-.ipaWord::after{
-    content: "/";
+.ipaWord{
+    span::after{
+        content: "/";
+    }
 }
 .disabled{
     background-color: lightgrey;

@@ -123,7 +123,7 @@ function shuffle(array) {//https://stackoverflow.com/questions/2450954/how-to-ra
     while (currentIndex != 0) {
     
         // Pick a remaining element...
-        let randomIndex = Math.floor(Math.random() * currentIndex);
+        let randomIndex = Math.floor(seededRandom() * currentIndex);
         currentIndex--;
     
         // And swap it with the current element.
@@ -195,4 +195,3 @@ function textNodesUnder(el) { //https://stackoverflow.com/questions/10730309/fin
     }
     return children
 }
-  

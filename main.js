@@ -1,6 +1,7 @@
 puzzleSettings = ["easy",10]
 firstGame = true
 restored = false
+daily = false
 history.pushState({mainMenu:true, america:america},"")
 addEventListener("popstate", restoreFromHistory)
 
@@ -10,6 +11,23 @@ function onBodyLoad(){
         initStorage()
     }
     loadStorage()
+    updateDailyTimer()
+    setInterval(updateDailyTimer,1000*60)
+}
+function updateDailyTimer(){
+    var day=Date.now()/86400000
+    var miliSeconds = (day - Math.floor(day))*86400000
+    var hoursSinceReset = miliSeconds/1000/60/60
+    var hoursToReset = 24 - hoursSinceReset
+    var minutes = Math.floor((hoursToReset - Math.floor(hoursToReset))*60)
+    document.getElementById("dailyTimer").innerHTML = Math.floor(hoursToReset) + ":" + minutes
+}
+function playRandom(){
+    daily = false
+    seededRandom = Math.random
+    document.getElementById("newPuzzle").style.display = "initial"
+    document.getElementById("newPuzzleMobile").style.display = "initial"
+    requestAnimationFrame(play)
 }
 function play(){
     document.getElementById("progressNewPuzzle").style.display = "initial"
@@ -198,6 +216,7 @@ function createWord(orth, data){
         moveLines(id)
     })
     wordDiv.appendChild(newWord)
+    scaleFontUnder(newWord)
     buttonDict[currentIdMax] = {elem:newWord, data:data, orth:orth, enabled:true, lines:[], children:[], parents:[]}
     if(puzzle.goal.indexOf(orth)!=-1){
         newWord.classList.add("goalWord")
@@ -293,8 +312,10 @@ function createChildWord(parentId, orth, data, parentId2){
     buttonDict[parentId].elem.classList.add("disabled")
     var newWordId = createWord(orth, data)
     var offset = getOffset(buttonDict[parentId].elem)
+    var newWordOffset = getOffset(buttonDict[newWordId].elem)
+    console.log(newWordOffset)
     buttonDict[newWordId].elem.style.top = (Number(buttonDict[parentId].elem.style.top.slice(0,-2)) + offset.height*2/zoomScale) + "px"
-    buttonDict[newWordId].elem.style.left = buttonDict[parentId].elem.style.left
+    buttonDict[newWordId].elem.style.left = (Number(buttonDict[parentId].elem.style.left.slice(0,-2)) + offset.width/2/zoomScale - newWordOffset.width/2/zoomScale) + "px"
     line = connectLine(buttonDict[parentId].elem, buttonDict[newWordId].elem)
     buttonDict[parentId].lines.push({line:line,connectedToId:newWordId})
     buttonDict[newWordId].lines.push({line:line,connectedToId:parentId})
@@ -456,6 +477,11 @@ function splitWordIpa(data,id){
         var w2 = createChildWord(id, options[index][1].join(""), options[index][1])
         var w1Offset = getOffset(buttonDict[w1].elem)
         buttonDict[w2].elem.style.left = Number(buttonDict[w1].elem.style.left.slice(0,-2)) + (w1Offset.width+5)/zoomScale + "px"
+        var w2Offset = getOffset(buttonDict[w2].elem)
+        var moveDirection = w2Offset.width/2/zoomScale
+        buttonDict[w1].elem.style.left = (Number(buttonDict[w1].elem.style.left.slice(0,-2)) - moveDirection) + "px"
+        buttonDict[w2].elem.style.left = (Number(buttonDict[w2].elem.style.left.slice(0,-2)) - moveDirection) + "px"
+        moveLines(w1)
         moveLines(w2)
     })
 }
@@ -493,6 +519,11 @@ function splitWordOrth(orth, id){
         var w2 = createChildWord(id, options[index][1])
         var w1Offset = getOffset(buttonDict[w1].elem)
         buttonDict[w2].elem.style.left = Number(buttonDict[w1].elem.style.left.slice(0,-2)) + (w1Offset.width+5)/zoomScale + "px"
+        var w2Offset = getOffset(buttonDict[w2].elem)
+        var moveDirection = w2Offset.width/2/zoomScale
+        buttonDict[w1].elem.style.left = (Number(buttonDict[w1].elem.style.left.slice(0,-2)) - moveDirection) + "px"
+        buttonDict[w2].elem.style.left = (Number(buttonDict[w2].elem.style.left.slice(0,-2)) - moveDirection) + "px"
+        moveLines(w1)
         moveLines(w2)
     })
 }
@@ -945,7 +976,9 @@ function updateGoalText(){
             document.getElementById("nextTutorial").style.display = "initial"
             document.getElementById("showAnswer").style.display = "none"
         }else{
-            document.getElementById("mobileReplayButton").style.display = "initial"
+            if(!daily){
+                document.getElementById("mobileReplayButton").style.display = "initial"
+            }
             document.getElementById("openShareMenu").style.display = "initial"
             document.getElementById("mobileShareButton").style.display = "initial"
         }
@@ -1350,7 +1383,7 @@ function boardToCanvas(){
     const width = bounds.right - bounds.left
     const height = bounds.bottom - bounds.top
     const scale = Math.max(width, height)/(goalRes-padding)
-    const borderScale = 0.1 //0.1*word box height
+    const borderScale = 0.05 //0.1*word box height
     const verticalOffset = padding/2 + ((goalRes-padding)/2 - height/scale/2)
     const horizontalOffset = padding/2 + ((goalRes-padding)/2 - width/scale/2)
     canvas.width = goalRes
@@ -1371,7 +1404,7 @@ function boardToCanvas(){
     ctx.textAlign = "left"
     var fontSet = false
     ctx.strokeStyle = "black"
-    ctx.lineWidth = 10
+    ctx.lineWidth = 5
     for(var word of Object.values(buttonDict)){
         var globalPos = getOffset(word.elem)
         var localPos = globalToLocal(globalPos.left, globalPos.top)
@@ -1388,7 +1421,7 @@ function boardToCanvas(){
         }
     }
     for(var word of Object.values(buttonDict)){
-        var globalPos = getOffset(word.elem)
+        var globalPos = getOffset(word.elem)    
         var orth = word.orth
         if(!fontSet){
             var fontSize = Math.floor(globalPos.height/scale*0.74)
@@ -1402,32 +1435,42 @@ function boardToCanvas(){
             orth = "/"+orth+"/"
         }
         var localPos = globalToLocal(globalPos.left, globalPos.top)
+        var localSize = {width: globalPos.width/scale, height:globalPos.height/scale}
         var textWidth = ctx.measureText(orth).width
         fontSize *= (globalPos.width/scale - 2/scale)/textWidth
         fontSize = Math.floor(fontSize)
         ctx.font = fontSize + "px ipa"
         ctx.fillStyle = "black"
         var borderThickness = Math.ceil(globalPos.height/scale*borderScale)
-        ctx.fillRect(localPos.x + horizontalOffset -borderThickness/2, localPos.y+verticalOffset-borderThickness/2, Math.floor(globalPos.width/scale)+borderThickness, Math.floor(globalPos.height/scale) +borderThickness)
-        if(word.enabled){
-            if(puzzle.goal.indexOf(word.orth)!=-1){
-                ctx.fillStyle = "green"
-            }else{
-                ctx.fillStyle = "white"
-            }
-        }else{
+        if(goalWords.indexOf(word.orth)==-1 && daily && startWords.indexOf(word.orth)==-1){
+            var raduis = globalPos.height*0.75
+            ctx.beginPath()
+            ctx.arc(localPos.x + localSize.width/2 + horizontalOffset, localPos.y + localSize.height/2 + verticalOffset, raduis,0,2*Math.PI)
             ctx.fillStyle = "lightgrey"
-        }
-        ctx.fillRect(localPos.x+horizontalOffset, localPos.y+verticalOffset, Math.floor(globalPos.width/scale), Math.floor(globalPos.height/scale))
-        if(word.enabled && puzzle.goal.indexOf(word.orth)!=-1){
-            ctx.fillStyle = "white"
+            ctx.fill()
+            ctx.stroke()
         }else{
-            ctx.fillStyle = "black"
+            ctx.fillRect(localPos.x + horizontalOffset -borderThickness/2, localPos.y+verticalOffset-borderThickness/2, Math.floor(globalPos.width/scale)+borderThickness, Math.floor(globalPos.height/scale) +borderThickness)
+            if(word.enabled){
+                if(puzzle.goal.indexOf(word.orth)!=-1){
+                    ctx.fillStyle = "green"
+                }else{
+                    ctx.fillStyle = "white"
+                }
+            }else{
+                ctx.fillStyle = "lightgrey"
+            }
+            ctx.fillRect(localPos.x+horizontalOffset, localPos.y+verticalOffset, Math.floor(globalPos.width/scale), Math.floor(globalPos.height/scale))
+            if(word.enabled && puzzle.goal.indexOf(word.orth)!=-1){
+                ctx.fillStyle = "white"
+            }else{
+                ctx.fillStyle = "black"
+            }
+            var xOffset = globalPos.width/scale/2 - ctx.measureText(orth).width/2
+            var yOffset = globalPos.height/scale/2 - (ctx.measureText(orth).fontBoundingBoxDescent-ctx.measureText(orth).fontBoundingBoxAscent)/2
+    
+            ctx.fillText(orth, Math.floor(localPos.x + xOffset)+horizontalOffset, Math.floor(localPos.y+yOffset)+verticalOffset)    
         }
-        var xOffset = globalPos.width/scale/2 - ctx.measureText(orth).width/2
-        var yOffset = globalPos.height/scale/2 - (ctx.measureText(orth).fontBoundingBoxDescent-ctx.measureText(orth).fontBoundingBoxAscent)/2
-
-        ctx.fillText(orth, Math.floor(localPos.x + xOffset)+horizontalOffset, Math.floor(localPos.y+yOffset)+verticalOffset)
     }
     return(canvas)
 }
@@ -1452,7 +1495,6 @@ function openCopyMenu(){
 }
 
 async function shareBoard(){
-
     var shareImage = boardToCanvas()
     var blob = await getBlobFromCanvas(shareImage)
     var fileArray = [
@@ -1508,7 +1550,10 @@ function updateBrowserHistory(){
         puzzle:puzzle,
         currentIdMax:currentIdMax,
         tutorial:tutorial,
-        currentLevel:currentLevel
+        currentLevel:currentLevel,
+        daily: daily,
+        startWords: startWords,
+        goalWords: goalWords
     }, "")
 }
 
@@ -1534,6 +1579,13 @@ function restoreFromHistory(e){
     if(!e.state.isOldPuzzle){
         return
     }
+    if(daily = e.state.daily){
+        document.getElementById("newPuzzle").style.display = "none"
+        document.getElementById("newPuzzleMobile").style.display = "none"
+    }else{
+        document.getElementById("newPuzzle").style.display = "initial"
+        document.getElementById("newPuzzleMobile").style.display = "initial"
+    }
     openGame()
     document.getElementById("words").innerHTML = e.state.words
     document.getElementById("lines").innerHTML = e.state.lines
@@ -1543,6 +1595,7 @@ function restoreFromHistory(e){
         zoomScale = e.state.zoomScale
         panAmount = e.state.panAmount
         goalWords = puzzle.goal
+        startWords = e.state.startWords
         wordsInPlay = new Set()
         buttonDict = {}
         for(let word of e.state.boardState){
@@ -1597,7 +1650,7 @@ function openMainMenu(){
     }
     document.getElementById("game").style.display = "none"
     document.getElementById("mainMenu").style.display = "flex"
-    document.getElementById("playButton").innerHTML = "Play!"
+    document.getElementById("playButton").innerHTML = "Play"
     for(var elem of document.getElementsByClassName("tutorialInfo")){
         elem.style.display = "none"
     }
@@ -1696,4 +1749,73 @@ function loadStorage(){
     document.getElementById("startCountCustom").value = Number(localStorage.getItem("customStartCount"))
     document.getElementById("goalCountCustom").value = Number(localStorage.getItem("customGoalCount"))
     fontSizeClass.style.fontSize = localStorage.getItem("fontSize") + "%"
+}
+
+letters = "abcdefghijklmnopqrstuvwxyz,-"
+encoding = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+function encode(msg){
+    var binary = ""
+    for (var char of msg){
+        var index = letters.indexOf(char)
+        index = index.toString(2)
+        index = "0".repeat(5-index.length) + index
+        binary += index
+    }
+    console.log(binary)
+    b64 = ""
+    while(binary.length){
+        bits = binary.slice(0,6)
+        bits += "0".repeat(6-bits.length)
+        binary = binary.slice(6)
+        bits = parseInt(bits, 2)
+        b64 += encoding[bits]
+    }
+    return(b64)
+}
+function decode(b64){
+    var binary = ""
+    for (var char of b64){
+        var index = encoding.indexOf(char)
+        index = index.toString(2)
+        index = "0".repeat(6-index.length) + index
+        binary += index
+    }
+    msg = ""
+    while(binary.length >= 5){
+        bits = binary.slice(0,5)
+        binary = binary.slice(5)
+        bits = parseInt(bits, 2)
+        msg += letters[bits]
+    }
+    return(msg)
+}
+
+function generateChallangeLink(){
+    path = startWords.join(",")+ "-" + goalWords.join(",") + "-" + (america ? "a" : "r")
+    console.log(path)
+    pathCompressed = encode(path)
+    return(location.origin + location.pathname + "?"+pathCompressed)
+}
+
+function loadChallange(){
+    pathCompressed = location.search.slice(1)
+    path = decode(pathCompressed).split("-")
+    challangeStart = path[0].split(",")
+    challangeEnd = path[1].split(",")
+    challange = {activeWords:[], roots:[]}
+    for(var word of challangeStart){
+        challange.roots.push({orth:word})
+    }
+    for(var word of challangeEnd){
+        challange.activeWords.push({orth:word})
+    }
+    init(challange)
+}
+
+function playDaily(){
+    daily = true
+    seededRandom = new Math.seedrandom(Math.floor(Date.now()/86400000))
+    requestAnimationFrame(play)
+    document.getElementById("newPuzzle").style.display = "none"
+    document.getElementById("newPuzzleMobile").style.display = "none"
 }

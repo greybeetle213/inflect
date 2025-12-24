@@ -7,6 +7,7 @@
     <title>/ɪnflɛkt/</title>
     <script>america=false</script>
     <script src="load.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script> 
     <script src="dict/extras.js"></script>
     <script src="borowedCode.js"></script>
     <script src="makePuzzle.js"></script>
@@ -49,8 +50,12 @@
             <button class="disabled" onclick="localStorage.setItem('dialect', 'american');window.location.href='american.html'">General American English</button>
         </div>
         <div>
-            <button id="playButton" class="menuButton" onclick="requestAnimationFrame(play)">Play!</button>
+            <button id="playButton" class="menuButton" onclick="playRandom()">Play</button>
+            <button id="playButtonDaily" class="menuButton" onclick="playDaily()">Daily</button>
             <button class="menuButton" onclick="startTutorial()">Tutorial</button>
+        </div>
+        <div>
+            <span>Daily puzzles reset in </span><span id="dailyTimer"></span>
         </div>
         <span id="progress"></span>
         <div class="showOnMobile" style="margin-top: 1em;">
@@ -151,7 +156,7 @@
                     </div>
                     <div id="mobileMenu" style="display: none;">
                         <hr>
-                        <button onclick="closeMobileMenu();replay()">New Puzzle</button>
+                        <button id="newPuzzleMobile" onclick="closeMobileMenu();replay()">New Puzzle</button>
                         <button onclick="openDictionary()">Open Dictionary</button>
                         <button onclick="backToMainMenu()">Back to Main Menu</button>
                     </div>

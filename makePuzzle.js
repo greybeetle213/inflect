@@ -1,3 +1,4 @@
+seededRandom = new Math.seedrandom(Date.now())
 function proccessDictFiles(){
     wordSet = new Set(wordList)
 
@@ -90,7 +91,7 @@ function getRandomFromKey(key, set, usedWordsSet){
 }
 
 function randomFromList(l){
-    return(l[Math.floor(Math.random()*l.length)])
+    return(l[Math.floor(seededRandom()*l.length)])
 }
 
 function randomFromSet(word){
@@ -156,10 +157,10 @@ class wordTree{
         this.createRandomWords(this.startWordNum)
         for(var i = 0; i < this.maxIter; i++){
             this.mutateAllWords()
-            if(this.activeWords.length < this.endWordNum || Math.random() < this.splitChance){
+            if(this.activeWords.length < this.endWordNum || seededRandom() < this.splitChance){
                 this.splitWords(1)
             }
-            if(this.activeWords.length > this.endWordNum && Math.random() < this.mergeChance){
+            if(this.activeWords.length > this.endWordNum && seededRandom() < this.mergeChance){
                 this.mergeWords(2)
             }else if(this.activeWords.length >= this.endWordNum + (this.maxIter - i)){
                 this.mergeWords(2)
@@ -569,6 +570,7 @@ function getBestPuzzle(difficulty, tries, startWordsCustom, endWordsCustom){
             score += 50
         }
         if(!goal.length){
+            tries ++
             continue
         }
         var wordLengthScore = goal[0].length**0.5

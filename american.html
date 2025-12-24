@@ -8,6 +8,7 @@
     <title>/ɪnfɫɛkt/</title>
     <script>america=true</script>
     <script src="load.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script> 
     <script src="dict_US/extras.js"></script>
     <script src="borowedCode.js"></script>
     <script src="makePuzzle.js"></script>
@@ -50,8 +51,12 @@
             <button>General American English</button>
         </div>
         <div>
-            <button id="playButton" class="menuButton" onclick="requestAnimationFrame(play)">Play!</button>
+            <button id="playButton" class="menuButton" onclick="requestAnimationFrame(play)">Play</button>
+            <button id="playButtonDaily" class="menuButton" onclick="playDaily()">Daily</button>
             <button class="menuButton" onclick="startTutorial()">Tutorial</button>
+        </div>
+        <div>
+            <span>Daily puzzles reset in </span><span id="dailyTimer"></span>
         </div>
         <span id="progress"></span>
         <div class="showOnMobile" style="margin-top: 1em;">
