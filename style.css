@@ -177,6 +177,9 @@ input:focus{
     flex-grow: 1;
 }
 @media (orientation: landscape){
+    .dailyTimer{
+        font-size: normal;
+    }
     #guiBox{
         display: flex;
         align-items: stretch;
@@ -185,6 +188,7 @@ input:focus{
     .menuButton{
         font-size: 150%;
     }
+
     .mainMenuMultiChoice{
         button{
             font-size: xx-large;
@@ -306,6 +310,9 @@ input:focus{
 }
 
 @media (orientation: portrait){
+    .dailyTimer{
+        font-size: large;
+    }
     .menuButton{
         font-size: 110%;
     }
