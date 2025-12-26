@@ -1,3 +1,6 @@
+window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+})
 const registerServiceWorker = async () => {
     if ('serviceWorker' in navigator) {
         try {
