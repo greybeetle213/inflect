@@ -1,6 +1,7 @@
 window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
 })
+const versionTag = "?2"
 const registerServiceWorker = async () => {
     if ('serviceWorker' in navigator) {
         try {
@@ -27,19 +28,19 @@ registerServiceWorker()
 async function loadResources(){
     console.log("started")
     if(america){
-        await fetch("dict_US/filteredConjs.json").then((r)=>(r.json())).then((r)=>(conjs=r))
-        await fetch("dict_US/ipaToOrth.json").then((r)=>(r.json())).then((r)=>(ipaToOrth=r))
-        await fetch("dict_US/ipaTree.json").then((r)=>(r.json())).then((r)=>(ipaTree=r))
-        await fetch("dict_US/orthToIpa.json").then((r)=>(r.json())).then((r)=>(orthToIpa=r))
-        await fetch("dict_US/orthTree.json").then((r)=>(r.json())).then((r)=>(orthTree=r))
-        await fetch("dict_US/wordList.json").then((r)=>(r.json())).then((r)=>(wordList=r))
+        await fetch("dict_US/filteredConjs.json"+versionTag).then((r)=>(r.json())).then((r)=>(conjs=r))
+        await fetch("dict_US/ipaToOrth.json"+versionTag).then((r)=>(r.json())).then((r)=>(ipaToOrth=r))
+        await fetch("dict_US/ipaTree.json"+versionTag).then((r)=>(r.json())).then((r)=>(ipaTree=r))
+        await fetch("dict_US/orthToIpa.json"+versionTag).then((r)=>(r.json())).then((r)=>(orthToIpa=r))
+        await fetch("dict_US/orthTree.json"+versionTag).then((r)=>(r.json())).then((r)=>(orthTree=r))
+        await fetch("dict_US/wordList.json"+versionTag).then((r)=>(r.json())).then((r)=>(wordList=r))
     }else{
-        await fetch("dict/filteredConjs.json").then((r)=>(r.json())).then((r)=>(conjs=r))
-        await fetch("dict/ipaToOrth.json").then((r)=>(r.json())).then((r)=>(ipaToOrth=r))
-        await fetch("dict/ipaTree.json").then((r)=>(r.json())).then((r)=>(ipaTree=r))
-        await fetch("dict/orthToIpa.json").then((r)=>(r.json())).then((r)=>(orthToIpa=r))
-        await fetch("dict/orthTree.json").then((r)=>(r.json())).then((r)=>(orthTree=r))
-        await fetch("dict/wordList.json").then((r)=>(r.json())).then((r)=>(wordList=r))
+        await fetch("dict/filteredConjs.json"+versionTag).then((r)=>(r.json())).then((r)=>(conjs=r))
+        await fetch("dict/ipaToOrth.json"+versionTag).then((r)=>(r.json())).then((r)=>(ipaToOrth=r))
+        await fetch("dict/ipaTree.json"+versionTag).then((r)=>(r.json())).then((r)=>(ipaTree=r))
+        await fetch("dict/orthToIpa.json"+versionTag).then((r)=>(r.json())).then((r)=>(orthToIpa=r))
+        await fetch("dict/orthTree.json"+versionTag).then((r)=>(r.json())).then((r)=>(orthTree=r))
+        await fetch("dict/wordList.json"+versionTag).then((r)=>(r.json())).then((r)=>(wordList=r))
     }
     addExtrasToDict()
     proccessDictFiles()

@@ -52,7 +52,7 @@ img{
     color: white;
 }
 
-.ipaWord, .transcriptions{
+.ipaWord, .transcriptions, #title{
     span{
         letter-spacing:0.05em;
     }
@@ -197,6 +197,9 @@ input:focus{
         .disabled{
             background-color: grey;
         }
+        span{
+            padding: 0.25em;
+        }
         padding: 0.5em;
     }
     .showOnMobile{
@@ -305,7 +308,7 @@ input:focus{
         }
     }
     #sharePreview{
-        height: 90vh;
+        height: 85vh;
     }
 }
 
@@ -324,6 +327,9 @@ input:focus{
             font-weight: bold;
             border: 2px solid black;
             padding: 0.05em;
+            span{
+                padding: 0.25em;
+            }
         }
         .disabled{
             border: 2px solid black;
@@ -490,6 +496,14 @@ input:focus{
         text-wrap: nowrap;
     }
 }
+#puzzleLink{
+    display: flex;
+    justify-content: center;
+    font-size: large;
+    span{
+        user-select: all !important;
+    }
+}
 #shareMenu{
     position: absolute;
     width: 100%;
@@ -509,6 +523,7 @@ input:focus{
     display: flex;
     width: 100%;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.25em;
     button{
         font-size: xx-large;

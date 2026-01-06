@@ -1,7 +1,8 @@
-puzzleSettings = ["easy",10]
+puzzleSettings = ["2",10]
 firstGame = true
 restored = false
 daily = false
+copyType = "solution"
 history.pushState({mainMenu:true, america:america},"")
 addEventListener("popstate", restoreFromHistory)
 
@@ -10,9 +11,17 @@ function onBodyLoad(){
     if(!localStorage.getItem("notFirstLoad")){
         initStorage()
     }
-    loadStorage()
+    try{
+        loadStorage()
+    } catch {
+        initStorage()
+        loadStorage()
+    }
     updateDailyTimer()
     setInterval(updateDailyTimer,1000*60)
+    if(location.search.length){
+        loadChallange()
+    }
 }
 function updateDailyTimer(){
     var day=Date.now()/86400000
@@ -313,7 +322,6 @@ function createChildWord(parentId, orth, data, parentId2){
     var newWordId = createWord(orth, data)
     var offset = getOffset(buttonDict[parentId].elem)
     var newWordOffset = getOffset(buttonDict[newWordId].elem)
-    console.log(newWordOffset)
     buttonDict[newWordId].elem.style.top = (Number(buttonDict[parentId].elem.style.top.slice(0,-2)) + offset.height*2/zoomScale) + "px"
     buttonDict[newWordId].elem.style.left = (Number(buttonDict[parentId].elem.style.left.slice(0,-2)) + offset.width/2/zoomScale - newWordOffset.width/2/zoomScale) + "px"
     line = connectLine(buttonDict[parentId].elem, buttonDict[newWordId].elem)
@@ -334,13 +342,7 @@ function createChildWord(parentId, orth, data, parentId2){
     return(newWordId)
 }
 
-
-function changeForm(id){
-    data = buttonDict[id].data
-    orth = buttonDict[id].orth
-    if(typeof(data)!="string"){
-        return
-    }
+function getForms(orth){
     forms = new Set()
     for(word of conjs.concat(extras)){
         if(word.indexOf(orth) != -1){
@@ -348,6 +350,15 @@ function changeForm(id){
         }
     }
     forms.delete(orth)
+    return(forms)
+}
+function changeForm(id){
+    data = buttonDict[id].data
+    orth = buttonDict[id].orth
+    if(typeof(data)!="string"){
+        return
+    }
+    forms = getForms(orth)
     if(forms.size == 0){
         return
     }
@@ -995,30 +1006,40 @@ function updateGoalText(){
 }
 
 function selectDifficulty(dif){
-    document.getElementById("begginer").classList.add("disabled")
-    document.getElementById("easy").classList.add("disabled")
-    document.getElementById("medium").classList.add("disabled")
-    document.getElementById("hard").classList.add("disabled")
+    document.getElementById("lvl0").classList.add("disabled")
+    document.getElementById("lvl1").classList.add("disabled")
+    document.getElementById("lvl2").classList.add("disabled")
+    document.getElementById("lvl3").classList.add("disabled")
+    document.getElementById("lvl4").classList.add("disabled")
+    document.getElementById("lvl5").classList.add("disabled")
     document.getElementById("custom").classList.add("disabled")
+
     document.getElementById(dif).classList.remove("disabled")
     document.getElementById("customDificulty").style.display = "none"
-    //settings: start words, end words, number of steps, number of puzzle to generate before picking hardest
     localStorage.setItem("difficulty", dif)
-    if(dif=="begginer"){
-        puzzleSettings=["begginer",10]
-    }
-    if(dif=="easy"){
-        puzzleSettings=["easy",20]
-    }
-    if(dif=="medium"){
-        puzzleSettings=["medium",20]
-    }
-    if(dif=="hard"){
-        puzzleSettings=["hard",20]
-    }
-    if(dif=="custom"){
-        document.getElementById("customDificulty").style.display = "flex"
-        puzzleSettings="custom"
+    switch(dif){
+        case "lvl0":
+            puzzleSettings=["0",10]
+            break
+        case "lvl1":
+            puzzleSettings=["1",10]
+            break
+        case "lvl2":
+            puzzleSettings=["2",20]
+            break
+        case "lvl3":
+            puzzleSettings=["3",20]
+            break
+        case "lvl4":
+            puzzleSettings=["4",20]
+            break
+        case "lvl5":
+            puzzleSettings=["5",20]
+            break
+        case "custom":
+            document.getElementById("customDificulty").style.display = "flex"
+            puzzleSettings="custom"
+            break
     }
 }
 
@@ -1031,19 +1052,19 @@ function selectStepNum(dif){
     localStorage.setItem("customStepNum", dif)
     switch(dif){
         case "veryFewSteps":
-            customDiff = "easy"
+            customDiff = "2"
             customTryNum = 5
             break
         case "fewSteps":
-            customDiff = "medium"
+            customDiff = "3"
             customTryNum = 10
             break
         case "mediumSteps":
-            customDiff = "hard"
+            customDiff = "4"
             customTryNum = 20
             break
         case "manySteps":
-            customDiff = "harder"
+            customDiff = "5"
             customTryNum = 20
             break
     }
@@ -1318,7 +1339,7 @@ function displaySearchResult(word){
     conjList.classList.add("canScroll")
     conjList.classList.add("conjList")
     if(conjDict[word] && conjDict[word].size > 1){
-        conjList.innerHTML = [...conjDict[word]].join(", ")
+        conjList.innerHTML = [...getForms(word)].join(", ")
     }else{
         conjList.innerHTML = "No inflections"
     }
@@ -1375,7 +1396,7 @@ function constrainInputNumber(id){
     }
 }
 
-function boardToCanvas(){
+function boardToCanvas(solutionHidden){
     const canvas = document.createElement("canvas")
     const bounds = getWordBounds()
     const padding = 40
@@ -1442,8 +1463,9 @@ function boardToCanvas(){
         ctx.font = fontSize + "px ipa"
         ctx.fillStyle = "black"
         var borderThickness = Math.ceil(globalPos.height/scale*borderScale)
-        if(goalWords.indexOf(word.orth)==-1 && daily && startWords.indexOf(word.orth)==-1){
-            var raduis = globalPos.height*0.75
+        if(goalWords.indexOf(word.orth)==-1 && solutionHidden && startWords.indexOf(word.orth)==-1){
+            var raduis = globalPos.height/scale/2
+            ctx.lineWidth = borderThickness/2
             ctx.beginPath()
             ctx.arc(localPos.x + localSize.width/2 + horizontalOffset, localPos.y + localSize.height/2 + verticalOffset, raduis,0,2*Math.PI)
             ctx.fillStyle = "lightgrey"
@@ -1472,14 +1494,35 @@ function boardToCanvas(){
             ctx.fillText(orth, Math.floor(localPos.x + xOffset)+horizontalOffset, Math.floor(localPos.y+yOffset)+verticalOffset)    
         }
     }
-    return(canvas)
+    return(addExtraInfo(canvas))
 }
 
 async function openShareMenu(){
-    if(navigator.share){
-        shareBoard()
+    shareImage = boardToCanvas(daily)
+    document.getElementById("shareMenu").style.display = "flex"
+    document.getElementById("copyButton").innerHTML = "Copy Image"
+    document.getElementById("sharePreview").src = shareImage.toDataURL()
+    if(!daily){
+        document.getElementById("shareTypeSelector").style.display = "initial"
+        changeShareType("solution")
     }else{
-        openCopyMenu()
+        document.getElementById("shareTypeSelector").style.display = "none"
+        document.getElementById("puzzleLink").innerHTML = ""
+        document.getElementById("copyLinkButton").style.display = "none"
+    }
+    const shareData = await getShareData() 
+    if(navigator.canShare && navigator.canShare(shareData)){
+        document.getElementById("copyButtons").style.display = "none"
+        document.getElementById("shareImageButton").style.display = "initial"
+    }else{
+        document.getElementById("copyButtons").style.display = "initial"
+        document.getElementById("shareImageButton").style.display = "none"
+        document.getElementById("copyButton").onclick = ()=>{
+            copyCanvasContentsToClipboard(shareImage)
+        }    
+        document.getElementById("copyLinkButton").onclick = ()=>{
+            navigator.clipboard.writeText(generateChallangeLink())
+        }
     }
 }
 
@@ -1493,9 +1536,8 @@ function openCopyMenu(){
         copyCanvasContentsToClipboard(shareImage)
     }
 }
-
-async function shareBoard(){
-    var shareImage = boardToCanvas()
+async function getShareData(){
+    var shareImage = boardToCanvas(copyType=="puzzle")
     var blob = await getBlobFromCanvas(shareImage)
     var fileArray = [
         new File(
@@ -1510,15 +1552,73 @@ async function shareBoard(){
     const shareData = {
         title: "Share Solution",
         files: fileArray,
-        url: "https://greybeetle213.github.io/inflect"
+        url: "https://greybeetle213.github.io/inflect",
       };
-    
+    return(shareData)
+}
+async function shareBoard(){
+    const shareData = await getShareData()
+    if(copyType == "puzzle"){
+        shareData.text = generateChallangeLink()
+        shareData.url = generateChallangeLink()
+    }
     if(navigator.canShare(shareData)){
         navigator.share(shareData)
     } else {
         openCopyMenu()
     }
 
+}
+
+function addExtraInfo(board){
+    const topBorder = 80
+    const canvas = document.createElement("canvas")
+    canvas.width = board.width
+    canvas.height = board.height + topBorder
+    const ctx = canvas.getContext("2d")
+    ctx.fillStyle = "green"
+    ctx.fillRect(0,0,canvas.width, canvas.height)
+    ctx.drawImage(board, 0, topBorder)
+    ctx.font = "60px ipa"
+    ctx.textBaseline = "top"
+    ctx.fillStyle = "white"
+    var date = getStrDate(new Date())
+    const stepCount = Object.keys(buttonDict).length - goalWords.length - startWords.length
+    var stepCountText = stepCount + " Step" + ((stepCount > 1) ? "s" : "")
+    ctx.textAlign = "left"
+    if(puzzleSettings!="custom"){
+        ctx.fillText("Lvl "+puzzleSettings[0],10,20)
+    }else[
+        ctx.fillText("Custom",10,20)
+    ]
+    if(daily){
+        ctx.textAlign = "center"
+        ctx.fillText(date, canvas.width/2, 20)
+    }
+    ctx.textAlign = "right"
+    ctx.fillText(stepCountText,canvas.width-10,20)
+    return(canvas)
+}
+
+function getStrDate(date){
+    var strDate = ""
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    strDate += date.getUTCDate()
+    switch (strDate[strDate.length-1]){
+        case "1":
+            strDate += "st "
+            break
+        case "2":
+            strDate += "nd "
+            break
+        case "3":
+            strDate += "rd "
+            break
+        default:
+            strDate += "th "
+    }
+    strDate += months[date.getUTCMonth()] + " " + (date.getUTCFullYear() - 2000)
+    return(strDate)
 }
 
 function addToBrowserHistory(){
@@ -1721,7 +1821,7 @@ function initStorage(){
     }
     localStorage.setItem("notFirstLoad", "true")
     localStorage.setItem("dialect", "rp")
-    localStorage.setItem("difficulty", "begginer")
+    localStorage.setItem("difficulty", "lvl0")
     localStorage.setItem("fontSize", "100")
     localStorage.setItem("customStepNum", "mediumSteps")
     localStorage.setItem("customStartCount", document.getElementById("startCountCustom").value)
@@ -1738,11 +1838,13 @@ function loadStorage(){
         navigator.storage.persist()
     }
     var dialect = localStorage.getItem("dialect")
-    if (dialect == "american" && !america){
-        window.location.href = "american.html"
-    }
-    if(dialect == "rp" && america){
-        window.location.href = "index.html"
+    if(!location.search.length){
+        if (dialect == "american" && !america){
+            window.location.href = "american.html"
+        }
+        if(dialect == "rp" && america){
+            window.location.href = "index.html"
+        }
     }
     selectDifficulty(localStorage.getItem("difficulty"))
     selectStepNum(localStorage.getItem("customStepNum"))
@@ -1762,7 +1864,6 @@ function encode(msg){
         index = "0".repeat(5-index.length) + index
         binary += index
     }
-    console.log(binary)
     b64 = ""
     while(binary.length){
         bits = binary.slice(0,6)
@@ -1792,10 +1893,21 @@ function decode(b64){
 }
 
 function generateChallangeLink(){
-    path = startWords.join(",")+ "-" + goalWords.join(",") + "-" + (america ? "a" : "r")
-    console.log(path)
+    if(puzzleSettings=="custom"){
+        diffCode = "z"
+    }else{
+        diffCode = "abcdef"[puzzleSettings[0]]
+    }
+    path = startWords.join(",")+ "-" + goalWords.join(",") + "-" + (america ? "a" : "r") + diffCode
     pathCompressed = encode(path)
-    return(location.origin + location.pathname + "?"+pathCompressed)
+    shortendPathname = location.pathname
+    if(shortendPathname.indexOf("american.html")!=-1){
+        shortendPathname = shortendPathname.slice(0,shortendPathname.indexOf("american.html"))
+    }
+    if(shortendPathname.indexOf("index.html")!=-1){
+        shortendPathname = shortendPathname.slice(0,shortendPathname.indexOf("index.html"))
+    }
+    return(location.origin + shortendPathname + "?"+pathCompressed)
 }
 
 function loadChallange(){
@@ -1804,6 +1916,19 @@ function loadChallange(){
     challangeStart = path[0].split(",")
     challangeEnd = path[1].split(",")
     challange = {activeWords:[], roots:[]}
+    challangeDiff = path[2][1]
+    if(challangeDiff=="z"){
+        selectDifficulty("custom")
+    }else{
+        selectDifficulty("lvl"+"abcdef".indexOf(challangeDiff))
+    }
+    challangeAmerican = path[2][0] == "a"
+    if (challangeAmerican && !america){
+        window.location.href = "american.html" + location.search
+    }
+    if(!challangeAmerican && america){
+        window.location.href = "index.html" + location.search
+    }
     for(var word of challangeStart){
         challange.roots.push({orth:word})
     }
@@ -1819,4 +1944,23 @@ function playDaily(){
     requestAnimationFrame(play)
     document.getElementById("newPuzzle").style.display = "none"
     document.getElementById("newPuzzleMobile").style.display = "none"
+}
+
+function changeShareType(type){
+    if(type == "solution"){
+        document.getElementById("copySolution").classList.remove("disabled")
+        document.getElementById("copyPuzzle").classList.add("disabled")
+        copyType = "solution"
+        shareImage = boardToCanvas(false)
+        document.getElementById("puzzleLink").innerHTML = ""
+        document.getElementById("copyLinkButton").style.display = "none"
+    }else{
+        document.getElementById("copyPuzzle").classList.remove("disabled")
+        document.getElementById("copySolution").classList.add("disabled")
+        copyType = "puzzle"
+        shareImage = boardToCanvas(true)
+        document.getElementById("puzzleLink").innerHTML = generateChallangeLink()
+        document.getElementById("copyLinkButton").style.display = "initial"
+    }
+    document.getElementById("sharePreview").src = shareImage.toDataURL()
 }

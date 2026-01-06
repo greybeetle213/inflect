@@ -183,9 +183,11 @@ async function copyCanvasContentsToClipboard(canvas) {
         // Write the data to the clipboard
         await navigator.clipboard.write(data);
     } catch (error) {
+        console.error(error)
         alert("There was an error. Just long press/right click the image and then hit copy. This only happens on some devices and I've spent way too long trying to fix it. If you know how to, please send help.")
     }
 }   
+
 
 function textNodesUnder(el) { //https://stackoverflow.com/questions/10730309/find-all-text-nodes-in-html-page
     const children = [] // Type: Node[]

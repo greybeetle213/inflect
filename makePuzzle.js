@@ -111,40 +111,47 @@ class wordTree{
         this.roots = []
         this.activeWords = []
         switch(difficulty){
-            case "begginer":
+            case "0":
+                this.mergeChance = 0
+                this.splitChance = 0
+                this.maxIter = 2
+                this.startWordNum = 1
+                this.endWordNum = 1
+                break
+            case "1":
                 this.mergeChance = 0
                 this.splitChance = 0
                 this.maxIter = 2
                 this.startWordNum = 3
                 this.endWordNum = 1
                 break
-            case "easy":
+            case "2":
                 this.mergeChance = 0
                 this.splitChance = 0
                 this.maxIter = 2
                 this.startWordNum = 2
                 this.endWordNum = 1
                 break
-            case "medium":
+            case "3":
                 this.mergeChance = 0.1
                 this.splitChance = 0.5
                 this.maxIter = 10
                 this.startWordNum = 2
                 this.endWordNum = 1
                 break
-            case "hard":
+            case "4":
                 this.mergeChance = 0.1
                 this.splitChance = 0.5
                 this.maxIter = 50
                 this.startWordNum = 2
                 this.endWordNum = 2
                 break
-            case "harder":
+            case "5":
                 this.mergeChance = 0.1
                 this.splitChance = 0.5
                 this.maxIter = 100
-                this.startWordNum = 3
-                this.endWordNum = 4
+                this.startWordNum = 1
+                this.endWordNum = 3
                 break
         }
     }
