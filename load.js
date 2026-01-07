@@ -44,6 +44,6 @@ async function loadResources(){
     }
     addExtrasToDict()
     proccessDictFiles()
-    console.log("done")
+    document.getElementById("mainMenu").style.visibility = "visible"
 }
 loadResources()

@@ -1537,7 +1537,7 @@ function openCopyMenu(){
     }
 }
 async function getShareData(){
-    var shareImage = boardToCanvas(copyType=="puzzle")
+    var shareImage = boardToCanvas(copyType=="puzzle"||daily)
     var blob = await getBlobFromCanvas(shareImage)
     var fileArray = [
         new File(
@@ -1851,7 +1851,6 @@ function loadStorage(){
     document.getElementById("startCountCustom").value = Number(localStorage.getItem("customStartCount"))
     document.getElementById("goalCountCustom").value = Number(localStorage.getItem("customGoalCount"))
     fontSizeClass.style.fontSize = localStorage.getItem("fontSize") + "%"
-    document.getElementById("mainMenu").style.visibility = "visible"
 }
 
 letters = "abcdefghijklmnopqrstuvwxyz,-"
