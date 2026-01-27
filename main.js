@@ -1767,7 +1767,10 @@ function scaleFont(textNode){
     var scaler = document.createElement("span")
     scaler.classList.add("fontSizeScale")
     if(textNode.parentNode.classList.contains("word")){
-        scaler.classList.add("fontScaleWord")   
+        scaler.classList.add("fontScaleWord")
+    }
+    if(textNode.parentNode.classList.contains("canScroll")){
+        scaler.classList.add("canScroll")
     }
     scaler.innerHTML = textNode.data
     textNode.parentNode.insertBefore(scaler, textNode)
